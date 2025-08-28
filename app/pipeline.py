@@ -198,8 +198,8 @@ class NewsPipeline:
         published_count = 0
         for processed in items:
             try:
-                # Post to X API (OAuth 1.0a authentication working)
-                result = x_client.post_news(
+                # Use console publisher due to X API Free tier restrictions
+                result = console_publisher.post_news(
                     text=processed.formatted_text,
                     image_path=processed.image_path,
                     news_url=processed.original.url,
@@ -209,7 +209,7 @@ class NewsPipeline:
                 if result:
                     processed.post_result = result
                     published_count += 1
-                    logger.info(f"Published to X: {processed.original.title[:50]}...")
+                    logger.info(f"Published to console: {processed.original.title[:50]}...")
                 else:
                     logger.warning(f"Failed to publish: {processed.original.title[:50]}...")
                 
