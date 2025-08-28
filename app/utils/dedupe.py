@@ -82,8 +82,14 @@ class NewsDeduplicator:
         """Generate hash for content."""
         # Normalize text for comparison
         content = f"{title.lower().strip()} {summary.lower().strip()}"
-        # Remove extra whitespace
+        # Remove extra whitespace and common words
         content = ' '.join(content.split())
+        
+        # Remove common words that might cause false duplicates
+        common_words = {'the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by', 'from', 'up', 'about', 'into', 'through', 'during', 'before', 'after', 'above', 'below', 'between', 'among', 'is', 'are', 'was', 'were', 'be', 'been', 'being', 'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would', 'could', 'should', 'may', 'might', 'must', 'can', 'shall'}
+        words = [word for word in content.split() if word not in common_words and len(word) > 2]
+        content = ' '.join(words)
+        
         return hashlib.sha256(content.encode('utf-8')).hexdigest()[:16]
     
     def is_duplicate(self, url: str, title: str, summary: str) -> bool:

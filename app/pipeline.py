@@ -15,6 +15,7 @@ from app.classify.rumor_official import classifier, NewsType
 from app.summarize.lexrank_tr import summarizer
 from app.summarize.templates_tr import templates
 from app.translate.translator import translator
+from app.filters.turkish_relevance import turkish_filter
 from app.images.openverse import openverse_client
 from app.images.card import card_generator
 from app.publisher.x_client import x_client
@@ -95,8 +96,11 @@ class NewsPipeline:
             elif not item.published_at:  # Include items without date
                 recent_items.append(item)
         
-        logger.info(f"Ingested {len(all_items)} total items, {len(recent_items)} recent")
-        return recent_items
+        # Filter for Turkish relevance
+        relevant_items = turkish_filter.filter_items(recent_items, min_score=2.0)
+        
+        logger.info(f"Ingested {len(all_items)} total items, {len(recent_items)} recent, {len(relevant_items)} relevant")
+        return relevant_items
     
     def deduplicate_items(self, items: List[NewsItem]) -> List[NewsItem]:
         """Remove duplicate news items."""
