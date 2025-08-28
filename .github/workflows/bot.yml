@@ -42,7 +42,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install feedparser trafilatura beautifulsoup4 httpx tldextract python-dateutil pydantic langdetect rapidfuzz readability-lxml sumy nltk Pillow requests tweepy pytz typer rich pyyaml schedule python-dotenv
+        pip install feedparser trafilatura beautifulsoup4 httpx tldextract python-dateutil pydantic langdetect rapidfuzz readability-lxml sumy nltk Pillow requests tweepy pytz typer rich pyyaml schedule python-dotenv langdetect
     
     - name: Download NLTK data
       run: |

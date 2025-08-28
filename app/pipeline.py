@@ -14,6 +14,7 @@ from app.extractors.article import ArticleExtractor
 from app.classify.rumor_official import classifier, NewsType
 from app.summarize.lexrank_tr import summarizer
 from app.summarize.templates_tr import templates
+from app.translate.translator import translator
 from app.images.openverse import openverse_client
 from app.images.card import card_generator
 from app.publisher.x_client import x_client
@@ -134,7 +135,22 @@ class NewsPipeline:
         
         for processed in items:
             try:
-                summary_data = summarizer.summarize_news_item(processed.original)
+                # Translate title and summary if needed
+                translated_title = translator.translate_title(processed.original.title)
+                translated_summary = translator.translate_summary(processed.original.summary)
+                
+                # Create a translated version of the original item for summarization
+                translated_item = NewsItem(
+                    id=processed.original.id,
+                    url=processed.original.url,
+                    title=translated_title,
+                    summary=translated_summary,
+                    published_at=processed.original.published_at,
+                    source=processed.original.source,
+                    raw_content=translator.translate_text(processed.original.raw_content) if processed.original.raw_content else None
+                )
+                
+                summary_data = summarizer.summarize_news_item(translated_item)
                 processed.summary_data = summary_data
                 
                 # Format for posting
