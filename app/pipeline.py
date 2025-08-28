@@ -53,19 +53,30 @@ class NewsPipeline:
         rss_urls = settings.config.sources.rss
         if rss_urls:
             logger.info(f"Fetching {len(rss_urls)} RSS feeds")
+            for i, url in enumerate(rss_urls):
+                logger.info(f"RSS {i+1}/{len(rss_urls)}: {url}")
             rss_items = self.rss_connector.fetch_all_feeds(rss_urls)
+            logger.info(f"RSS feeds returned {len(rss_items)} items")
             all_items.extend(rss_items)
+        else:
+            logger.warning("No RSS URLs configured")
         
         # Fetch website articles
         site_configs = settings.config.sources.sites
         if site_configs:
             logger.info(f"Scraping {len(site_configs)} websites")
             article_urls = self.website_connector.fetch_all_sites(site_configs)
+            logger.info(f"Website scraping returned {len(article_urls)} URLs")
             
             # Extract articles from URLs
             if article_urls:
                 extracted_items = self.article_extractor.extract_multiple(article_urls[:20])  # Limit to 20
+                logger.info(f"Article extraction returned {len(extracted_items)} items")
                 all_items.extend(extracted_items)
+        else:
+            logger.warning("No website configs found")
+        
+        logger.info(f"Total collected items before filtering: {len(all_items)}")
         
         # Filter recent items (last 24 hours)
         recent_items = []

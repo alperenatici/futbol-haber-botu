@@ -131,28 +131,27 @@ class RSSConnector:
         logger.info(f"Parsed {len(items)} items from {source_url}")
         return items
     
-    def fetch_all_feeds(self, feed_urls: List[str]) -> List[NewsItem]:
+    def fetch_all_feeds(self, urls: List[str]) -> List[NewsItem]:
         """Fetch all RSS feeds and return combined news items."""
         all_items = []
         
-        for url in feed_urls:
+        for url in urls:
             try:
+                logger.info(f"Fetching RSS feed: {url}")
                 feed_data = self.fetch_feed(url)
                 if feed_data:
                     items = self.parse_entries(feed_data, url)
                     all_items.extend(items)
+                    logger.info(f" Fetched {len(items)} items from {url}")
+                else:
+                    logger.warning(f" No data from {url}")
             except Exception as e:
-                logger.error(f"Error processing feed {url}: {e}")
-                continue
+                logger.error(f" Error processing {url}: {e}")
         
-        # Sort by publication date (newest first)
-        all_items.sort(
-            key=lambda x: x.published_at or datetime.min,
-            reverse=True
-        )
-        
-        logger.info(f"Total items fetched: {len(all_items)}")
+        logger.info(f"RSS total: {len(all_items)} items from {len(urls)} feeds")
+        all_items.sort(key=lambda x: x.published_at or datetime.min, reverse=True)
         return all_items
+        
     
     def __del__(self):
         """Clean up HTTP client."""
