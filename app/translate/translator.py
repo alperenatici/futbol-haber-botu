@@ -195,7 +195,7 @@ class TurkishTranslator:
         return word
     
     def translate_with_mymemory(self, text: str, source_lang: str = 'en', target_lang: str = 'tr') -> Optional[str]:
-        """Translate text using MyMemory free translation API with improved quality checks."""
+        """Translate text using MyMemory free translation API with rate limit handling."""
         try:
             # Clean and prepare text for translation
             clean_text_input = text.strip()
@@ -205,16 +205,22 @@ class TurkishTranslator:
             # MyMemory API endpoint
             url = "https://api.mymemory.translated.net/get"
             params = {
-                'q': clean_text_input[:1000],  # Increased limit for better context
+                'q': clean_text_input[:500],  # Reduced limit to avoid rate limits
                 'langpair': f'{source_lang}|{target_lang}',
                 'de': 'futbolhaber@example.com',  # Optional email for better service
                 'mt': '1'  # Machine translation flag for better quality
             }
             
-            response = requests.get(url, params=params, timeout=15)
+            response = requests.get(url, params=params, timeout=10)
             response.raise_for_status()
             
             data = response.json()
+            
+            # Check for rate limit
+            if data.get('responseStatus') == 403 or 'RATE_LIMIT_EXCEEDED' in str(data):
+                logger.warning("MyMemory API rate limit exceeded, falling back to local translation")
+                return None
+                
             if data.get('responseStatus') == 200:
                 translated = data.get('responseData', {}).get('translatedText', '')
                 
@@ -232,6 +238,8 @@ class TurkishTranslator:
                             logger.info(f"MyMemory translation: {text[:30]} -> {translated[:30]}")
                             return translated.strip()
                     
+        except requests.exceptions.RequestException as e:
+            logger.warning(f"MyMemory API request failed: {e}")
         except Exception as e:
             logger.warning(f"MyMemory translation failed: {e}")
             
