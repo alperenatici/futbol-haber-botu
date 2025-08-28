@@ -35,23 +35,17 @@ class XClient:
             raise ValueError("X/Twitter credentials not found in environment variables")
         
         try:
-            # Initialize v2 client for posting
-            self._client = tweepy.Client(
-                consumer_key=self.api_key,
-                consumer_secret=self.api_secret,
-                access_token=self.access_token,
-                access_token_secret=self.access_token_secret,
-                wait_on_rate_limit=True
-            )
-            
-            # Initialize v1.1 API for media upload
+            # Initialize OAuth 1.0a authentication
             auth = tweepy.OAuth1UserHandler(
                 self.api_key,
                 self.api_secret,
                 self.access_token,
                 self.access_token_secret
             )
+            
+            # Use only v1.1 API for both posting and media upload
             self._api_v1 = tweepy.API(auth, wait_on_rate_limit=True)
+            self._client = None  # Disable v2 client
             
             logger.info("X/Twitter clients initialized successfully")
             
@@ -108,20 +102,23 @@ class XClient:
     
     def post_tweet(self, text: str, media_ids: Optional[List[str]] = None) -> Optional[Dict[str, Any]]:
         """Post a tweet with optional media."""
-        if not self._client:
+        if not self._api_v1:
             self._init_clients()
         
         try:
             logger.info(f"Posting tweet: {text[:50]}...")
             
-            # Create tweet
-            response = self._client.create_tweet(
-                text=text,
-                media_ids=media_ids
-            )
+            # Create tweet using v1.1 API
+            if media_ids:
+                status = self._api_v1.update_status(
+                    status=text,
+                    media_ids=media_ids
+                )
+            else:
+                status = self._api_v1.update_status(status=text)
             
-            if response.data:
-                tweet_id = response.data['id']
+            if status:
+                tweet_id = status.id_str
                 tweet_url = f"https://twitter.com/user/status/{tweet_id}"
                 
                 # Update tracking
