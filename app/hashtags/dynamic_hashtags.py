@@ -99,10 +99,22 @@ class DynamicHashtagGenerator:
         """Extract hashtags based on identified entities."""
         hashtags = set()
         
+        # Handle case where entities might be a list of strings instead of dicts
+        if not entities:
+            return hashtags
+            
         for entity in entities:
-            entity_name = entity['name'].lower()
-            entity_type = entity['type']
-            original_name = entity['name']
+            # Handle both dict and string formats
+            if isinstance(entity, str):
+                entity_name = entity.lower()
+                entity_type = 'unknown'
+                original_name = entity
+            elif isinstance(entity, dict):
+                entity_name = entity.get('name', '').lower()
+                entity_type = entity.get('type', 'unknown')
+                original_name = entity.get('name', '')
+            else:
+                continue
             
             # Team hashtags
             if entity_type in ['turkish_team', 'international_team']:

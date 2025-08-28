@@ -229,12 +229,19 @@ class NewsPipeline:
             try:
                 # Upload media if image exists
                 media_ids = None
-                if hasattr(processed, 'image_path') and processed.image_path and processed.image_path.exists():
+                if hasattr(processed, 'image_path') and processed.image_path:
                     try:
-                        media_id = x_client.upload_media(str(processed.image_path))
-                        if media_id:
-                            media_ids = [media_id]
-                            logger.info(f"Uploaded image for: {processed.original.title[:50]}...")
+                        # Convert to Path object if it's a string
+                        if isinstance(processed.image_path, str):
+                            processed.image_path = Path(processed.image_path)
+                        
+                        if processed.image_path.exists():
+                            media_id = x_client.upload_media(str(processed.image_path))
+                            if media_id:
+                                media_ids = [media_id]
+                                logger.info(f"Uploaded image for: {processed.original.title[:50]}...")
+                        else:
+                            logger.warning(f"Image file not found: {processed.image_path}")
                     except Exception as e:
                         logger.error(f"Error uploading media: {e}")
                 

@@ -64,57 +64,92 @@ class PostFormatter:
         
         return truncated + "..." if truncated else text[:max_length-3] + "..."
     
-    def format_post(self, main_text: str, source_url: str = "", 
-                   hashtags: List[str] = None, max_length: int = None) -> str:
-        """Format complete social media post."""
-        if max_length is None:
-            max_length = self.max_length
+    def format_post(self, title: str, summary: str, source_url: str, 
+                   hashtags: List[str] = None, news_type: str = "NEUTRAL",
+                   footer_template: str = "Kaynak: {source}") -> str:
+        """Format a complete social media post with improved content quality."""
+        hashtags = hashtags or []
         
-        # Start with main text
-        post_text = main_text.strip()
+        # Clean and validate inputs
+        title = title.strip() if title else ""
+        summary = summary.strip() if summary else ""
         
-        # Add source if provided
-        source_text = ""
-        if source_url:
-            domain = extract_domain(source_url)
-            source_text = f"\n\nKaynak: {domain}"
+        # Ensure we have meaningful content
+        if not title and not summary:
+            return "Haber içeriği bulunamadı."
         
-        # Add hashtags if provided
-        hashtag_text = ""
-        if hashtags:
-            hashtag_text = f" {self.format_hashtags(hashtags)}"
+        # Use summary if title is too short or missing
+        if len(title) < 10 and len(summary) > len(title):
+            title = summary
+            summary = ""
         
-        # Combine all parts
-        full_text = post_text + source_text + hashtag_text
+        # Format source
+        domain = extract_domain(source_url)
+        footer = footer_template.format(source=domain)
         
-        # Check if it fits
-        if self.calculate_length(full_text) <= max_length:
-            return full_text
+        # Format hashtags
+        hashtag_text = self.format_hashtags(hashtags)
         
-        # Try without hashtags
-        text_with_source = post_text + source_text
-        if self.calculate_length(text_with_source) <= max_length:
-            return text_with_source
+        # Build post components
+        prefix = ""
+        if news_type == "OFFICIAL":
+            prefix = "RESMİ: "
+        elif news_type == "RUMOR":
+            prefix = "SÖYLENTİ: "
         
-        # Try with shorter source
-        if source_url:
-            short_source = f"\n\nKaynak: {extract_domain(source_url)}"
-            text_with_short_source = post_text + short_source
-            
-            if self.calculate_length(text_with_short_source) <= max_length:
-                return text_with_short_source
-        
-        # Truncate main text
-        available_length = max_length
-        if source_text:
-            available_length -= len(source_text)
+        # Calculate available space
+        fixed_parts = f" {footer}"
         if hashtag_text:
-            available_length -= len(hashtag_text)
+            fixed_parts += f" {hashtag_text}"
         
-        truncated_main = self.truncate_text(post_text, available_length)
-        final_text = truncated_main + source_text + hashtag_text
+        fixed_length = self.calculate_length(fixed_parts)
+        available_length = self.max_length - fixed_length - len(prefix) - 5  # Buffer
         
-        return final_text
+        # Combine title and summary intelligently
+        content = title
+        if summary and summary.lower() != title.lower() and len(summary) > 20:
+            # Add summary if different from title and meaningful
+            potential_content = f"{title}. {summary}"
+            if self.calculate_length(potential_content) <= available_length:
+                content = potential_content
+            else:
+                # Try to fit at least part of summary
+                remaining_space = available_length - self.calculate_length(title) - 2
+                if remaining_space > 30:  # Only add if we have meaningful space
+                    truncated_summary = self.truncate_text(summary, remaining_space)
+                    if len(truncated_summary) > 20:  # Only if meaningful length
+                        content = f"{title}. {truncated_summary}"
+        
+        # Ensure content ends properly
+        if content and not content.endswith(('.', '!', '?')):
+            # Find last complete sentence
+            sentences = content.split('.')
+            if len(sentences) > 1:
+                content = '. '.join(sentences[:-1]) + '.'
+            else:
+                content += '.'
+        
+        # Build final post
+        post_parts = [prefix + content, footer]
+        if hashtag_text:
+            post_parts.append(hashtag_text)
+        
+        final_post = " ".join(part for part in post_parts if part)
+        
+        # Final length check and truncation if needed
+        if self.calculate_length(final_post) > self.max_length:
+            # Emergency truncation - preserve sentence structure
+            excess = self.calculate_length(final_post) - self.max_length + 3
+            if len(content) > excess:
+                content = content[:-excess] + "..."
+                # Ensure it ends at word boundary
+                last_space = content.rfind(' ')
+                if last_space > len(content) - 20:
+                    content = content[:last_space] + "..."
+                post_parts[0] = prefix + content
+                final_post = " ".join(part for part in post_parts if part)
+        
+        return final_post
     
     def clean_text_for_posting(self, text: str) -> str:
         """Clean text for social media posting."""

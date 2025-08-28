@@ -1,15 +1,7 @@
 language: tr
 rss_feeds:
   # Turkish Media
-  - name: "Fanatik"
-    url: "https://www.fanatik.com.tr/rss/futbol.xml"
-    language: "tr"
-    category: "football"
     
-  - name: "A Spor"
-    url: "https://www.aspor.com.tr/rss/futbol"
-    language: "tr"
-    category: "football"
     
   - name: "Hürriyet Spor"
     url: "https://www.hurriyet.com.tr/rss/spor"
@@ -26,55 +18,27 @@ rss_feeds:
     language: "tr"
     category: "sports"
     
-  - name: "Milliyet Spor"
-    url: "https://www.milliyet.com.tr/rss/rss/spor.xml"
-    language: "tr"
-    category: "sports"
     
   - name: "Sabah Spor"
     url: "https://www.sabah.com.tr/rss/spor.xml"
     language: "tr"
     category: "sports"
     
-  - name: "Sporx"
-    url: "https://www.sporx.com/rss"
-    language: "tr"
-    category: "sports"
     
-  - name: "TRT Spor"
-    url: "https://www.trtspor.com.tr/rss"
-    language: "tr"
-    category: "sports"
     
   - name: "Fotospor"
     url: "https://www.fotospor.com/rss"
     language: "tr"
     category: "sports"
     
-  - name: "Futbol Arena"
-    url: "https://www.futbolarena.com/rss"
-    language: "tr"
-    category: "football"
     
   - name: "Spor Toto Süper Lig"
     url: "https://www.tff.org/Resources/TFF/RSS/superlig.xml"
     language: "tr"
     category: "football"
     
-  - name: "Galatasaray"
-    url: "https://www.galatasaray.org/haber/rss.xml"
-    language: "tr"
-    category: "football"
     
-  - name: "Fenerbahçe"
-    url: "https://www.fenerbahce.org/haberler/rss"
-    language: "tr"
-    category: "football"
     
-  - name: "Beşiktaş"
-    url: "https://www.bjk.com.tr/tr/Sayfalar/rss.aspx"
-    language: "tr"
-    category: "football"
     
   # International Sources
   - name: "BBC Sport Football"
@@ -82,20 +46,12 @@ rss_feeds:
     language: "en"
     category: "football"
     
-  - name: "Sky Sports Football"
-    url: "https://www.skysports.com/rss/football"
-    language: "en"
-    category: "football"
     
   - name: "ESPN FC"
     url: "https://www.espn.com/espn/rss/soccer/news"
     language: "en"
     category: "football"
     
-  - name: "Goal.com"
-    url: "https://www.goal.com/feeds/news"
-    language: "en"
-    category: "football"
     
   - name: "Football Italia"
     url: "https://football-italia.net/feed/"
@@ -137,15 +93,7 @@ rss_feeds:
     language: "en"
     category: "football"
     
-  - name: "Reuters Sports"
-    url: "https://www.reuters.com/news/sports/soccer/feed/"
-    language: "en"
-    category: "football"
     
-  - name: "AP Sports"
-    url: "https://apnews.com/apf-sports"
-    language: "en"
-    category: "football"
     
   - name: "World Soccer"
     url: "https://www.worldsoccer.com/feed"
@@ -179,27 +127,27 @@ rss_feeds:
     category: "sports"
     
   - name: "Fotomac Süper Lig"
-    url: "https://www.fotomac.com.tr/rss/SuperLig.xml"
+    url: "https://www.fotomac.com.tr/rss/superlig.xml"
     language: "tr"
     category: "football"
     
   - name: "Fotomac Galatasaray"
-    url: "https://www.fotomac.com.tr/rss/Galatasaray.xml"
+    url: "https://www.fotomac.com.tr/rss/galatasaray.xml"
     language: "tr"
     category: "football"
     
   - name: "Fotomac Fenerbahçe"
-    url: "https://www.fotomac.com.tr/rss/Fenerbahce.xml"
+    url: "https://www.fotomac.com.tr/rss/fenerbahce.xml"
     language: "tr"
     category: "football"
     
   - name: "Fotomac Beşiktaş"
-    url: "https://www.fotomac.com.tr/rss/Besiktas.xml"
+    url: "https://www.fotomac.com.tr/rss/besiktas.xml"
     language: "tr"
     category: "football"
     
   - name: "Fotomac Trabzonspor"
-    url: "https://www.fotomac.com.tr/rss/Trabzonspor.xml"
+    url: "https://www.fotomac.com.tr/rss/trabzonspor.xml"
     language: "tr"
     category: "football"
     
