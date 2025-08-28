@@ -1,87 +1,156 @@
 language: tr
 rss_feeds:
-  # Turkish Media - Working Sources
-  - name: "CNN Türk Spor"
-    url: "https://www.cnnturk.com/spor/rss"
-    category: "turkish_media"
+  # Turkish Media
+  - name: "Fanatik"
+    url: "https://www.fanatik.com.tr/rss/futbol.xml"
+    language: "tr"
+    category: "football"
+    
+  - name: "A Spor"
+    url: "https://www.aspor.com.tr/rss/futbol"
+    language: "tr"
+    category: "football"
     
   - name: "Hürriyet Spor"
     url: "https://www.hurriyet.com.tr/rss/spor"
-    category: "turkish_media"
+    language: "tr"
+    category: "sports"
+    
+  - name: "CNN Türk Spor"
+    url: "https://www.cnnturk.com/feed/rss/spor/news"
+    language: "tr"
+    category: "sports"
+    
+  - name: "NTV Spor"
+    url: "https://www.ntv.com.tr/spor.rss"
+    language: "tr"
+    category: "sports"
+    
+  - name: "Milliyet Spor"
+    url: "https://www.milliyet.com.tr/rss/rss/spor.xml"
+    language: "tr"
+    category: "sports"
     
   - name: "Sabah Spor"
     url: "https://www.sabah.com.tr/rss/spor.xml"
-    category: "turkish_media"
-    
-  - name: "Habertürk Spor"
-    url: "https://www.haberturk.com/rss/spor.xml"
-    category: "turkish_media"
-    
-  - name: "A Spor"
-    url: "https://www.aspor.com.tr/rss"
-    category: "turkish_media"
-    
-  - name: "Fotospor"
-    url: "https://www.fotospor.com/rss.xml"
-    category: "turkish_media"
-    
-  - name: "Spor Arena"
-    url: "https://www.sporarena.com.tr/rss"
-    category: "turkish_media"
+    language: "tr"
+    category: "sports"
     
   - name: "Sporx"
-    url: "https://www.sporx.com/rss.xml"
-    category: "turkish_media"
+    url: "https://www.sporx.com/rss"
+    language: "tr"
+    category: "sports"
     
-  - name: "Fanatik"
-    url: "https://www.fanatik.com.tr/rss.xml"
-    category: "turkish_media"
-
-  # Turkish Teams - Working Sources
-  - name: "Galatasaray SK"
-    url: "https://www.galatasaray.org/haber/rss"
-    category: "turkish_teams"
+  - name: "TRT Spor"
+    url: "https://www.trtspor.com.tr/rss"
+    language: "tr"
+    category: "sports"
     
-  - name: "Fenerbahçe SK"
-    url: "https://www.fenerbahce.org/rss"
-    category: "turkish_teams"
+  - name: "Fotospor"
+    url: "https://www.fotospor.com/rss"
+    language: "tr"
+    category: "sports"
     
-  - name: "Beşiktaş JK"
-    url: "https://www.bjk.com.tr/rss"
-    category: "turkish_teams"
+  - name: "Futbol Arena"
+    url: "https://www.futbolarena.com/rss"
+    language: "tr"
+    category: "football"
     
-  - name: "Trabzonspor"
-    url: "https://www.trabzonspor.org.tr/rss"
-    category: "turkish_teams"
-
+  - name: "Spor Toto Süper Lig"
+    url: "https://www.tff.org/Resources/TFF/RSS/superlig.xml"
+    language: "tr"
+    category: "football"
+    
+  - name: "Galatasaray"
+    url: "https://www.galatasaray.org/haber/rss.xml"
+    language: "tr"
+    category: "football"
+    
+  - name: "Fenerbahçe"
+    url: "https://www.fenerbahce.org/haberler/rss"
+    language: "tr"
+    category: "football"
+    
+  - name: "Beşiktaş"
+    url: "https://www.bjk.com.tr/tr/Sayfalar/rss.aspx"
+    language: "tr"
+    category: "football"
+    
   # International Sources
-  - name: "ESPN FC"
-    url: "https://www.espn.com/espn/rss/soccer/news"
-    category: "international"
-    
   - name: "BBC Sport Football"
-    url: "http://feeds.bbci.co.uk/sport/football/rss.xml"
-    category: "international"
+    url: "https://feeds.bbci.co.uk/sport/football/rss.xml"
+    language: "en"
+    category: "football"
     
   - name: "Sky Sports Football"
     url: "https://www.skysports.com/rss/football"
-    category: "international"
+    language: "en"
+    category: "football"
     
-  - name: "UEFA.com"
-    url: "https://www.uefa.com/rssfeed/news/"
-    category: "international"
-    
-  - name: "FIFA.com"
-    url: "https://www.fifa.com/rss-feeds/news"
-    category: "international"
+  - name: "ESPN FC"
+    url: "https://www.espn.com/espn/rss/soccer/news"
+    language: "en"
+    category: "football"
     
   - name: "Goal.com"
-    url: "https://www.goal.com/feeds/news?fmt=rss&ICID=HP"
-    category: "international"
+    url: "https://www.goal.com/feeds/news"
+    language: "en"
+    category: "football"
     
-  - name: "Transfermarkt"
-    url: "https://www.transfermarkt.com/rss/news"
-    category: "international"
+  - name: "Football Italia"
+    url: "https://football-italia.net/feed/"
+    language: "en"
+    category: "football"
+    
+  - name: "Marca English"
+    url: "https://e00-marca.uecdn.es/rss/en/index.xml"
+    language: "en"
+    category: "football"
+    
+  - name: "90min"
+    url: "https://www.90min.com/posts.rss"
+    language: "en"
+    category: "football"
+    
+  - name: "CaughtOffside"
+    url: "https://www.caughtoffside.com/feed/"
+    language: "en"
+    category: "football"
+    
+  - name: "101 Great Goals"
+    url: "https://www.101greatgoals.com/feed/"
+    language: "en"
+    category: "football"
+    
+  - name: "FootballFanCast"
+    url: "https://www.footballfancast.com/feed/"
+    language: "en"
+    category: "football"
+    
+  - name: "Sportslens"
+    url: "https://sportslens.com/feed/"
+    language: "en"
+    category: "football"
+    
+  - name: "The Guardian Football"
+    url: "https://www.theguardian.com/football/rss"
+    language: "en"
+    category: "football"
+    
+  - name: "Reuters Sports"
+    url: "https://www.reuters.com/news/sports/soccer/feed/"
+    language: "en"
+    category: "football"
+    
+  - name: "AP Sports"
+    url: "https://apnews.com/apf-sports"
+    language: "en"
+    category: "football"
+    
+  - name: "World Soccer"
+    url: "https://www.worldsoccer.com/feed"
+    language: "en"
+    category: "football"
 license:
   image_preference: card_only   # 'card_only' | 'openverse_only'
 post:

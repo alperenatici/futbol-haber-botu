@@ -32,7 +32,8 @@ dependencies = [
     "schedule>=1.2.0",
     "trafilatura>=1.6.0",
     "readability-lxml>=0.8.1",
-    "sumy>=0.11.0"
+    "sumy>=0.11.0",
+    "langdetect>=1.0.9"
 ]
 
 [project.optional-dependencies]

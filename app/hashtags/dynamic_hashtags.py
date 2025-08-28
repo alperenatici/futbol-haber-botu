@@ -102,6 +102,7 @@ class DynamicHashtagGenerator:
         for entity in entities:
             entity_name = entity['name'].lower()
             entity_type = entity['type']
+            original_name = entity['name']
             
             # Team hashtags
             if entity_type in ['turkish_team', 'international_team']:
@@ -109,18 +110,38 @@ class DynamicHashtagGenerator:
                     hashtags.update(self.team_hashtags[entity_name])
                 elif entity_name in self.international_hashtags:
                     hashtags.update(self.international_hashtags[entity_name])
+                else:
+                    # Create hashtag from team name
+                    clean_name = re.sub(r'[^\w\s]', '', original_name)
+                    clean_name = ''.join(word.capitalize() for word in clean_name.split())
+                    if len(clean_name) > 2:
+                        hashtags.add(f"#{clean_name}")
             
             # Competition hashtags
             elif entity_type == 'competition':
                 if entity_name in self.competition_hashtags:
                     hashtags.update(self.competition_hashtags[entity_name])
+                else:
+                    # Create hashtag from competition name
+                    clean_name = re.sub(r'[^\w\s]', '', original_name)
+                    clean_name = ''.join(word.capitalize() for word in clean_name.split())
+                    if len(clean_name) > 2:
+                        hashtags.add(f"#{clean_name}")
             
-            # Player hashtags (use player name as hashtag)
+            # Player hashtags (use full player name as hashtag)
             elif entity_type in ['turkish_player', 'international_player']:
-                # Clean player name for hashtag
-                clean_name = re.sub(r'[^\w\s]', '', entity['name'])
+                # Use full player name for hashtag
+                clean_name = re.sub(r'[^\w\s]', '', original_name)
                 clean_name = ''.join(word.capitalize() for word in clean_name.split())
-                if len(clean_name) > 2:
+                if len(clean_name) > 2 and len(clean_name) < 20:  # Reasonable length
+                    hashtags.add(f"#{clean_name}")
+            
+            # Coach/Manager hashtags
+            elif entity_type in ['coach', 'manager']:
+                # Use full coach name for hashtag
+                clean_name = re.sub(r'[^\w\s]', '', original_name)
+                clean_name = ''.join(word.capitalize() for word in clean_name.split())
+                if len(clean_name) > 2 and len(clean_name) < 20:
                     hashtags.add(f"#{clean_name}")
         
         return hashtags

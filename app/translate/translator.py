@@ -1,6 +1,7 @@
 """Text translation utilities for Turkish news bot."""
 
 import re
+import requests
 from typing import Optional, Dict, Any
 try:
     from langdetect import detect
@@ -193,12 +194,48 @@ class TurkishTranslator:
         
         return word
     
+    def translate_with_mymemory(self, text: str, source_lang: str = 'en', target_lang: str = 'tr') -> Optional[str]:
+        """Translate text using MyMemory free translation API."""
+        try:
+            # MyMemory API endpoint
+            url = "https://api.mymemory.translated.net/get"
+            params = {
+                'q': text[:500],  # Limit text length
+                'langpair': f'{source_lang}|{target_lang}'
+            }
+            
+            response = requests.get(url, params=params, timeout=10)
+            response.raise_for_status()
+            
+            data = response.json()
+            if data.get('responseStatus') == 200:
+                translated = data.get('responseData', {}).get('translatedText', '')
+                if translated and translated.lower() != text.lower():
+                    logger.info(f"MyMemory translation: {text[:30]} -> {translated[:30]}")
+                    return translated
+                    
+        except Exception as e:
+            logger.warning(f"MyMemory translation failed: {e}")
+            
+        return None
+
     def translate_text(self, text: str) -> str:
-        """Translate English text to Turkish using word mappings."""
+        """Translate English text to Turkish using API and fallback to word mappings."""
         if not self.needs_translation(text):
             return text
             
         logger.info(f"Translating text: {text[:50]}...")
+        
+        # Try API translation first for better quality
+        api_translation = self.translate_with_mymemory(text)
+        if api_translation:
+            # Clean and validate API result
+            cleaned = clean_text(api_translation)
+            if len(cleaned) > 10 and cleaned.lower() != text.lower():
+                return cleaned
+        
+        # Fallback to word mapping translation
+        logger.info("Using fallback word mapping translation")
         
         # Clean text
         cleaned_text = clean_text(text)
