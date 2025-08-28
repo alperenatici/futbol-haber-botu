@@ -2,7 +2,16 @@
 
 import re
 from typing import Optional, Dict, Any
-from langdetect import detect, LangDetectError
+try:
+    from langdetect import detect
+    from langdetect.lang_detect_exception import LangDetectException as LangDetectError
+except ImportError:
+    # Fallback if langdetect is not available
+    def detect(text):
+        return 'unknown'
+    
+    class LangDetectError(Exception):
+        pass
 
 from app.utils.logging import get_logger
 from app.utils.text import clean_text
