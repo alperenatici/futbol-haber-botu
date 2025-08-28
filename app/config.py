@@ -78,7 +78,23 @@ class Settings:
             with open(config_path, 'r', encoding='utf-8') as f:
                 data = yaml.safe_load(f)
                 print(f"DEBUG: Loaded config data: {data}")
-                return Config(**data)
+                
+                # Create sources manually to ensure proper parsing
+                sources_data = {
+                    'rss_feeds': data.get('rss_feeds', []),
+                    'sites': data.get('sites', [])
+                }
+                print(f"DEBUG: Sources data: {sources_data}")
+                
+                config_dict = {
+                    'language': data.get('language', 'tr'),
+                    'sources': sources_data,
+                    'license': data.get('license', {}),
+                    'post': data.get('post', {})
+                }
+                print(f"DEBUG: Final config dict: {config_dict}")
+                
+                return Config(**config_dict)
         else:
             print(f"DEBUG: Config file not found at {config_path}")
             # Return default config
