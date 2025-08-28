@@ -2,22 +2,23 @@ name: Football News Bot
 
 on:
   schedule:
-    # Her 15 dakikada bir çalış (hafta içi yoğun saatlerde)
-    - cron: '*/15 * * * *'
+    # Her 30 dakikada bir çalışır (7/24 aktif)
+    - cron: '*/30 * * * *'
   workflow_dispatch:
     inputs:
       dry_run:
-        description: 'Dry run (sadece test)'
+        description: 'Dry run mode (true/false)'
         required: false
-        default: 'true'
-        type: boolean
+        default: 'false'
       max_items:
-        description: 'Maksimum haber sayısı'
+        description: 'Maximum items to process'
         required: false
         default: '5'
-        type: string
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
-# Aynı anda sadece bir workflow çalışsın
 concurrency:
   group: futbot
   cancel-in-progress: true

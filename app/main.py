@@ -12,6 +12,7 @@ from app.pipeline import pipeline
 from app.publisher.x_client import x_client
 from app.publisher.console_publisher import console_publisher
 from app.utils.dedupe import deduplicator
+from app.scheduler.continuous_runner import continuous_runner
 
 # Initialize Typer app
 app = typer.Typer(
@@ -81,7 +82,7 @@ def run_once(
     console.print("[bold blue]Pipeline başlıyor...[/bold blue]")
     
     try:
-        processed_items = pipeline.run_pipeline(dry_run=actual_dry_run, max_items=max_items)
+        processed_items = continuous_runner.run_once(dry_run=actual_dry_run, max_items=max_items)
         
         if not processed_items:
             console.print("[yellow]İşlenecek haber bulunamadı[/yellow]")
@@ -100,7 +101,7 @@ def run_once(
             
             if actual_dry_run:
                 status = "DRY RUN"
-            elif item.post_result:
+            elif hasattr(item, 'posted') and item.posted:
                 status = "✓ Yayınlandı"
             else:
                 status = "✗ Başarısız"
@@ -128,11 +129,27 @@ def run_once(
         if actual_dry_run:
             console.print("\n[yellow]DRY RUN: Hiçbir şey yayınlanmadı[/yellow]")
         else:
-            published_count = sum(1 for item in processed_items if item.post_result)
+            published_count = sum(1 for item in processed_items if hasattr(item, 'posted') and item.posted)
             console.print(f"\n[green]✓ {published_count} haber başarıyla yayınlandı[/green]")
             
     except Exception as e:
         console.print(f"[red]Pipeline hatası: {e}[/red]")
+        raise typer.Exit(1)
+
+
+@app.command()
+def run_continuous():
+    """Bot'u sürekli çalışma modunda başlat (7/24)."""
+    console.print("[bold blue]Bot sürekli çalışma modunda başlatılıyor...[/bold blue]")
+    console.print("[green]Her 30 dakikada bir RSS kaynaklarını tarayacak[/green]")
+    console.print("[dim]Durdurmak için Ctrl+C kullanın[/dim]\n")
+    
+    try:
+        continuous_runner.run_continuous()
+    except KeyboardInterrupt:
+        console.print("\n[yellow]Bot durduruldu[/yellow]")
+    except Exception as e:
+        console.print(f"[red]Sürekli çalışma hatası: {e}[/red]")
         raise typer.Exit(1)
 
 
