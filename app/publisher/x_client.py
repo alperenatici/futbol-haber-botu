@@ -191,36 +191,31 @@ class XClient:
             logger.error(f"Error posting news: {e}")
             return None
     
-    def get_recent_tweets(self, count: int = 10) -> List[Dict[str, Any]]:
+    def get_recent_tweets(self, count: int = 5) -> List[Dict[str, Any]]:
         """Get recent tweets from the account."""
-        if not self._client:
+        if not self._api_v1:
             self._init_clients()
         
         try:
-            # Get user ID first
-            me = self._client.get_me()
-            if not me.data:
-                logger.error("Could not get user information")
-                return []
-            
-            user_id = me.data.id
-            
-            # Get recent tweets
-            tweets = self._client.get_users_tweets(
-                id=user_id,
-                max_results=count,
-                tweet_fields=['created_at', 'public_metrics']
+            # Get recent tweets using v1.1 API
+            tweets = self._api_v1.user_timeline(
+                count=count,
+                include_rts=False,
+                exclude_replies=True
             )
             
-            if tweets.data:
+            if tweets:
                 return [
                     {
-                        'id': tweet.id,
+                        'id': tweet.id_str,
                         'text': tweet.text,
                         'created_at': tweet.created_at,
-                        'metrics': tweet.public_metrics
+                        'metrics': {
+                            'retweet_count': tweet.retweet_count,
+                            'favorite_count': tweet.favorite_count
+                        }
                     }
-                    for tweet in tweets.data
+                    for tweet in tweets
                 ]
             
             return []
@@ -232,12 +227,13 @@ class XClient:
     def test_connection(self) -> bool:
         """Test X/Twitter API connection."""
         try:
-            if not self._client:
+            if not self._api_v1:
                 self._init_clients()
             
-            me = self._client.get_me()
-            if me.data:
-                logger.info(f"Connected to X as: @{me.data.username}")
+            # Use v1.1 API to verify credentials
+            me = self._api_v1.verify_credentials()
+            if me:
+                logger.info(f"Connected to X as: @{me.screen_name}")
                 return True
             
             return False
