@@ -151,6 +151,82 @@ rss_feeds:
     url: "https://www.worldsoccer.com/feed"
     language: "en"
     category: "football"
+    
+  # Additional Turkish Sources
+  - name: "Futboo"
+    url: "https://www.futboo.com/rss.xml"
+    language: "tr"
+    category: "football"
+    
+  - name: "Futboo Son Dakika"
+    url: "https://www.futboo.com/sondakika.xml"
+    language: "tr"
+    category: "football"
+    
+  - name: "Futboo Transfer"
+    url: "https://www.futboo.com/rss_transfer_2347.xml"
+    language: "tr"
+    category: "football"
+    
+  - name: "Spormaraton Son Dakika"
+    url: "https://www.spormaraton.com/rss/sondakika/"
+    language: "tr"
+    category: "sports"
+    
+  - name: "Fotomac"
+    url: "https://www.fotomac.com.tr/rss/anasayfa.xml"
+    language: "tr"
+    category: "sports"
+    
+  - name: "Fotomac Süper Lig"
+    url: "https://www.fotomac.com.tr/rss/SuperLig.xml"
+    language: "tr"
+    category: "football"
+    
+  - name: "Fotomac Galatasaray"
+    url: "https://www.fotomac.com.tr/rss/Galatasaray.xml"
+    language: "tr"
+    category: "football"
+    
+  - name: "Fotomac Fenerbahçe"
+    url: "https://www.fotomac.com.tr/rss/Fenerbahce.xml"
+    language: "tr"
+    category: "football"
+    
+  - name: "Fotomac Beşiktaş"
+    url: "https://www.fotomac.com.tr/rss/Besiktas.xml"
+    language: "tr"
+    category: "football"
+    
+  - name: "Fotomac Trabzonspor"
+    url: "https://www.fotomac.com.tr/rss/Trabzonspor.xml"
+    language: "tr"
+    category: "football"
+    
+  - name: "Ajans Spor"
+    url: "https://ajansspor.com/rss"
+    language: "tr"
+    category: "sports"
+    
+  - name: "NTV Spor Futbol"
+    url: "https://www.ntvspor.net/rss/kategori/futbol"
+    language: "tr"
+    category: "football"
+    
+  - name: "NTV Spor Dünyadan Futbol"
+    url: "https://www.ntvspor.net/rss/kategori/dunyadan-futbol"
+    language: "tr"
+    category: "football"
+    
+  - name: "Sözcü Spor"
+    url: "https://www.sozcu.com.tr/feeds-rss-category-spor"
+    language: "tr"
+    category: "sports"
+    
+  - name: "Sözcü Futbol"
+    url: "https://www.sozcu.com.tr/feeds-rss-category-futbol"
+    language: "tr"
+    category: "football"
 license:
   image_preference: card_only   # 'card_only' | 'openverse_only'
 post:
