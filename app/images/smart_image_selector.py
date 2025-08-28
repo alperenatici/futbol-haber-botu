@@ -26,16 +26,19 @@ class SmartImageSelector:
             }
         )
         
-        # Team logo URLs (can be expanded)
+        # Team logo URLs - working sources
         self.team_logos = {
-            'galatasaray': 'https://logoeps.com/wp-content/uploads/2013/03/galatasaray-vector-logo.png',
-            'fenerbahçe': 'https://logoeps.com/wp-content/uploads/2013/03/fenerbahce-vector-logo.png',
-            'beşiktaş': 'https://logoeps.com/wp-content/uploads/2013/03/besiktas-vector-logo.png',
-            'trabzonspor': 'https://logoeps.com/wp-content/uploads/2013/03/trabzonspor-vector-logo.png',
-            'real madrid': 'https://logoeps.com/wp-content/uploads/2013/03/real-madrid-vector-logo.png',
-            'barcelona': 'https://logoeps.com/wp-content/uploads/2013/03/barcelona-vector-logo.png',
-            'manchester united': 'https://logoeps.com/wp-content/uploads/2013/03/manchester-united-vector-logo.png',
-            'liverpool': 'https://logoeps.com/wp-content/uploads/2013/03/liverpool-vector-logo.png'
+            'galatasaray': 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/94/Galatasaray_Sports_Club_Logo.svg/200px-Galatasaray_Sports_Club_Logo.svg.png',
+            'fenerbahçe': 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f7/Fenerbah%C3%A7e_SK.png/200px-Fenerbah%C3%A7e_SK.png',
+            'beşiktaş': 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/19/Be%C5%9Fikta%C5%9F_JK.png/200px-Be%C5%9Fikta%C5%9F_JK.png',
+            'trabzonspor': 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Trabzonspor.svg/200px-Trabzonspor.svg.png',
+            'başakşehir': 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Ba%C5%9Fak%C5%9Fehir_FK.png/200px-Ba%C5%9Fak%C5%9Fehir_FK.png',
+            'real madrid': 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Real_Madrid_CF.svg/200px-Real_Madrid_CF.svg.png',
+            'barcelona': 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/FC_Barcelona_%28crest%29.svg/200px-FC_Barcelona_%28crest%29.svg.png',
+            'manchester united': 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Manchester_United_FC_crest.svg/200px-Manchester_United_FC_crest.svg.png',
+            'liverpool': 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Liverpool_FC.svg/200px-Liverpool_FC.svg.png',
+            'chelsea': 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Chelsea_FC.svg/200px-Chelsea_FC.svg.png',
+            'arsenal': 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Arsenal_FC.svg/200px-Arsenal_FC.svg.png'
         }
     
     def extract_image_from_source(self, url: str) -> Optional[str]:

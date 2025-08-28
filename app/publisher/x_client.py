@@ -142,14 +142,21 @@ class XClient:
                 logger.error("Tweet creation failed - no response data")
                 return None
                 
-        except tweepy.TooManyRequests:
-            logger.error("Rate limit exceeded")
-            return None
         except tweepy.Forbidden as e:
             logger.error(f"Tweet forbidden: {e}")
+            logger.error(f"This might be due to duplicate content or policy violation")
+            return None
+        except tweepy.Unauthorized as e:
+            logger.error(f"Tweet unauthorized: {e}")
+            logger.error(f"Check API credentials and permissions")
+            return None
+        except tweepy.BadRequest as e:
+            logger.error(f"Bad request: {e}")
+            logger.error(f"Tweet text might be too long or contain invalid characters")
             return None
         except Exception as e:
-            logger.error(f"Failed to post tweet: {e}")
+            logger.error(f"Error posting tweet: {e}")
+            logger.error(f"Tweet text length: {len(text)} characters")
             return None
     
     def post_news(self, text: str, image_path: Optional[Path] = None,

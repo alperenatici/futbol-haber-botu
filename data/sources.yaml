@@ -1,42 +1,87 @@
 language: tr
 rss_feeds:
-  # Türk Medyası - Öncelik
-  - url: "https://www.sabah.com.tr/rss/spor.xml"
-    name: "Sabah Spor"
-  - url: "https://www.hurriyet.com.tr/rss/spor"
-    name: "Hürriyet Spor"
-  - url: "https://www.ntvspor.net/rss"
-    name: "NTV Spor"
-  - url: "https://www.trtspor.com.tr/rss"
-    name: "TRT Spor"
-  - url: "https://www.fanatik.com.tr/rss"
-    name: "Fanatik"
-  - url: "https://www.sporx.com/rss"
-    name: "Sporx"
-  - url: "https://www.milliyet.com.tr/rss/rss/spor.xml"
-    name: "Milliyet Spor"
-  - url: "https://www.haberturk.com/rss/spor.xml"
-    name: "Habertürk Spor"
-  - url: "https://www.cnnturk.com/feed/rss/spor/news"
-    name: "CNN Türk Spor"
-  - url: "https://www.sozcu.com.tr/kategori/spor/feed/"
-    name: "Sözcü Spor"
-  
-  # Türk Takımları Odaklı
-  - url: "https://www.galatasaray.org/haber/rss"
-    name: "Galatasaray"
-  - url: "https://www.fenerbahce.org/detay.asp?ContentID=rss"
-    name: "Fenerbahçe"
-  - url: "https://www.bjk.com.tr/tr/rss"
-    name: "Beşiktaş"
-  - url: "https://www.trabzonspor.org.tr/tr/rss"
-    name: "Trabzonspor"
-  
-  # Uluslararası (Türk oyuncular ve transferler için)
-  - url: "https://www.goal.com/feeds/news?fmt=rss&ICID=HP"
-    name: "Goal.com"
-  - url: "https://www.transfermarkt.com/rss/news"
-    name: "Transfermarkt"
+  # Turkish Media - Working Sources
+  - name: "CNN Türk Spor"
+    url: "https://www.cnnturk.com/spor/rss"
+    category: "turkish_media"
+    
+  - name: "Hürriyet Spor"
+    url: "https://www.hurriyet.com.tr/rss/spor"
+    category: "turkish_media"
+    
+  - name: "Sabah Spor"
+    url: "https://www.sabah.com.tr/rss/spor.xml"
+    category: "turkish_media"
+    
+  - name: "Habertürk Spor"
+    url: "https://www.haberturk.com/rss/spor.xml"
+    category: "turkish_media"
+    
+  - name: "A Spor"
+    url: "https://www.aspor.com.tr/rss"
+    category: "turkish_media"
+    
+  - name: "Fotospor"
+    url: "https://www.fotospor.com/rss.xml"
+    category: "turkish_media"
+    
+  - name: "Spor Arena"
+    url: "https://www.sporarena.com.tr/rss"
+    category: "turkish_media"
+    
+  - name: "Sporx"
+    url: "https://www.sporx.com/rss.xml"
+    category: "turkish_media"
+    
+  - name: "Fanatik"
+    url: "https://www.fanatik.com.tr/rss.xml"
+    category: "turkish_media"
+
+  # Turkish Teams - Working Sources
+  - name: "Galatasaray SK"
+    url: "https://www.galatasaray.org/haber/rss"
+    category: "turkish_teams"
+    
+  - name: "Fenerbahçe SK"
+    url: "https://www.fenerbahce.org/rss"
+    category: "turkish_teams"
+    
+  - name: "Beşiktaş JK"
+    url: "https://www.bjk.com.tr/rss"
+    category: "turkish_teams"
+    
+  - name: "Trabzonspor"
+    url: "https://www.trabzonspor.org.tr/rss"
+    category: "turkish_teams"
+
+  # International Sources
+  - name: "ESPN FC"
+    url: "https://www.espn.com/espn/rss/soccer/news"
+    category: "international"
+    
+  - name: "BBC Sport Football"
+    url: "http://feeds.bbci.co.uk/sport/football/rss.xml"
+    category: "international"
+    
+  - name: "Sky Sports Football"
+    url: "https://www.skysports.com/rss/football"
+    category: "international"
+    
+  - name: "UEFA.com"
+    url: "https://www.uefa.com/rssfeed/news/"
+    category: "international"
+    
+  - name: "FIFA.com"
+    url: "https://www.fifa.com/rss-feeds/news"
+    category: "international"
+    
+  - name: "Goal.com"
+    url: "https://www.goal.com/feeds/news?fmt=rss&ICID=HP"
+    category: "international"
+    
+  - name: "Transfermarkt"
+    url: "https://www.transfermarkt.com/rss/news"
+    category: "international"
 license:
   image_preference: card_only   # 'card_only' | 'openverse_only'
 post:

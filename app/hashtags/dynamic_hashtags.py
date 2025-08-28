@@ -130,25 +130,35 @@ class DynamicHashtagGenerator:
         hashtags = set()
         text = f"{title} {summary}".lower()
         
-        # Transfer related
-        transfer_keywords = ['transfer', 'imza', 'anlaşma', 'bonservis', 'kiralık']
+        # Transfer related - Turkish keywords
+        transfer_keywords = ['transfer', 'imza', 'anlaşma', 'bonservis', 'kiralık', 'geliyor', 'gidiyor', 'ayrıldı', 'katıldı']
         if any(keyword in text for keyword in transfer_keywords):
-            hashtags.update(self.transfer_hashtags)
+            hashtags.add('#Transfer')
         
-        # Match related
-        match_keywords = ['maç', 'karşılaşma', 'müsabaka', 'gol', 'skor']
+        # Match related - Turkish keywords  
+        match_keywords = ['maç', 'karşılaşma', 'müsabaka', 'gol', 'skor', 'beraberlik', 'galibiyeti', 'mağlubiyeti']
         if any(keyword in text for keyword in match_keywords):
             hashtags.add('#Maç')
         
-        # Injury related
-        injury_keywords = ['sakatlık', 'yaralandı', 'ameliyat', 'tedavi']
+        # Injury related - Turkish keywords
+        injury_keywords = ['sakatlık', 'yaralandı', 'ameliyat', 'tedavi', 'sakatlandı', 'yaralı']
         if any(keyword in text for keyword in injury_keywords):
             hashtags.add('#Sakatlık')
         
-        # Competition detection
-        for comp_name, comp_hashtags in self.competition_hashtags.items():
-            if comp_name in text:
-                hashtags.update(comp_hashtags[:1])  # Add main hashtag
+        # Coach related - Turkish keywords
+        coach_keywords = ['teknik direktör', 'antrenör', 'hoca', 'istifa', 'görevden', 'atandı']
+        if any(keyword in text for keyword in coach_keywords):
+            hashtags.add('#TeknikDirektör')
+        
+        # Competition detection - more specific
+        if 'şampiyonlar ligi' in text or 'champions league' in text:
+            hashtags.add('#ChampionsLeague')
+        elif 'europa league' in text or 'avrupa ligi' in text:
+            hashtags.add('#EuropaLeague')
+        elif 'süper lig' in text:
+            hashtags.add('#SüperLig')
+        elif 'türkiye kupası' in text:
+            hashtags.add('#TürkiyeKupası')
         
         return hashtags
     
