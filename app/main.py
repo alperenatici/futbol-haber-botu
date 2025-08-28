@@ -10,6 +10,7 @@ from app.config import settings
 from app.utils.logging import setup_logging, get_logger
 from app.pipeline import pipeline
 from app.publisher.x_client import x_client
+from app.publisher.console_publisher import console_publisher
 from app.utils.dedupe import deduplicator
 
 # Initialize Typer app

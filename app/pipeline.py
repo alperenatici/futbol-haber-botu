@@ -17,6 +17,7 @@ from app.summarize.templates_tr import templates
 from app.images.openverse import openverse_client
 from app.images.card import card_generator
 from app.publisher.x_client import x_client
+from app.publisher.console_publisher import console_publisher
 from app.publisher.formatter import formatter
 
 logger = get_logger(__name__)
@@ -51,12 +52,7 @@ class NewsPipeline:
         all_items = []
         
         # Fetch RSS feeds
-        print(f"DEBUG: Config object: {settings.config}")
-        print(f"DEBUG: Sources object: {settings.config.sources}")
-        print(f"DEBUG: RSS feeds: {settings.config.sources.rss_feeds}")
-        
         rss_urls = settings.config.sources.rss
-        print(f"DEBUG: RSS URLs property: {rss_urls}")
         
         if rss_urls:
             logger.info(f"Fetching {len(rss_urls)} RSS feeds")
@@ -202,26 +198,24 @@ class NewsPipeline:
         published_count = 0
         for processed in items:
             try:
-                if not x_client.can_post():
-                    logger.info("Rate limit reached, stopping publication")
-                    break
-                
+                # Post to X API (OAuth 1.0a authentication working)
                 result = x_client.post_news(
-                    processed.formatted_text,
-                    processed.image_path,
-                    processed.original.url,
-                    processed.original.title
+                    text=processed.formatted_text,
+                    image_path=processed.image_path,
+                    news_url=processed.original.url,
+                    title=processed.original.title
                 )
                 
-                processed.post_result = result
-                
                 if result:
+                    processed.post_result = result
                     published_count += 1
-                    logger.info(f"Published: {processed.original.title}")
+                    logger.info(f"Published to X: {processed.original.title[:50]}...")
+                else:
+                    logger.warning(f"Failed to publish: {processed.original.title[:50]}...")
                 
                 # Small delay between posts
                 import time
-                time.sleep(2)
+                time.sleep(1)
                 
             except Exception as e:
                 logger.error(f"Error publishing item {processed.original.id}: {e}")

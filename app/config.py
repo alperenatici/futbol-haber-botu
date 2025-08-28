@@ -5,6 +5,10 @@ import yaml
 from pathlib import Path
 from typing import Dict, List, Optional, Any
 from pydantic import BaseModel, Field
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 
 class RateLimits(BaseModel):
@@ -76,25 +80,24 @@ class Settings:
         
         if config_path.exists():
             with open(config_path, 'r', encoding='utf-8') as f:
-                data = yaml.safe_load(f)
-                print(f"DEBUG: Loaded config data: {data}")
+                yaml_data = yaml.safe_load(f)
                 
-                # Create sources manually to ensure proper parsing
-                sources_data = {
-                    'rss_feeds': data.get('rss_feeds', []),
-                    'sites': data.get('sites', [])
-                }
-                print(f"DEBUG: Sources data: {sources_data}")
+                # Manual mapping to fix rss_feeds -> rss issue
+                sources_data = yaml_data.copy()
+                if 'rss_feeds' in sources_data:
+                    # Convert list of dicts to list of RSSFeed objects
+                    rss_feeds = [RSSFeed(**item) for item in sources_data['rss_feeds']]
+                    sources_data['rss_feeds'] = rss_feeds
+                    del sources_data['rss_feeds']  # Remove after conversion
+                    sources_data['rss_feeds'] = rss_feeds  # Add back converted
                 
-                config_dict = {
-                    'language': data.get('language', 'tr'),
-                    'sources': sources_data,
-                    'license': data.get('license', {}),
-                    'post': data.get('post', {})
-                }
-                print(f"DEBUG: Final config dict: {config_dict}")
-                
-                return Config(**config_dict)
+                # Create config with manual mapping
+                config = Config(
+                    sources=Sources(**sources_data),
+                    license=License(**yaml_data.get('license', {})),
+                    post=Post(**yaml_data.get('post', {}))
+                )
+                return config
         else:
             print(f"DEBUG: Config file not found at {config_path}")
             # Return default config
