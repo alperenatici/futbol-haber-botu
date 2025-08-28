@@ -1,20 +1,27 @@
 language: tr
-rate_limits:
-  min_minutes_between_posts: 10
-  daily_post_cap: 30
-sources:
-  rss:
-    - https://www.skysports.com/rss/12040          # Football news
-    - https://www.uefa.com/rssfeed/news/all.xml    # Resmi UEFA
-    - https://www.fifa.com/rss-feeds/news          # Resmi FIFA
-    - https://www.bbc.co.uk/sport/football/rss.xml
-    - https://www.espn.com/espn/rss/soccer/news
-  sites:
-    - name: transfermarkt_news
-      url: https://www.transfermarkt.com
-      paths: ["/transfers/news"]
+rss_feeds:
+  - url: "https://www.tff.org/default.aspx?pageID=687&ftxtID=0&rss=1"
+    name: "TFF Resmi"
+  - url: "https://www.fanatik.com.tr/rss/futbol.xml"
+    name: "Fanatik Futbol"
+  - url: "https://www.sabah.com.tr/rss/spor.xml"
+    name: "Sabah Spor"
+  - url: "https://www.hurriyet.com.tr/rss/spor"
+    name: "Hürriyet Spor"
+  - url: "https://www.milliyet.com.tr/rss/rss/spor.xml"
+    name: "Milliyet Spor"
+  - url: "https://www.aspor.com.tr/rss"
+    name: "A Spor"
+  - url: "https://www.sporx.com/rss"
+    name: "Sporx"
+  - url: "https://www.skysports.com/rss/football"
+    name: "Sky Sports"
+  - url: "https://www.espn.com/espn/rss/soccer/news"
+    name: "ESPN Soccer"
+  - url: "https://feeds.bbci.co.uk/sport/football/rss.xml"
+    name: "BBC Football"
 license:
-  image_preference: openverse_only   # 'card_only' | 'openverse_only'
+  image_preference: card_only   # 'card_only' | 'openverse_only'
 post:
   hashtags: ["#futbol", "#transfer", "#sakatlık"]
   footer: "Kaynak: {source}"
