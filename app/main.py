@@ -75,8 +75,7 @@ def run_once(
     
     if not actual_dry_run:
         console.print("[bold red]CANLI MOD: Haberler X'te yayınlanacak![/bold red]")
-        if not typer.confirm("Devam etmek istiyor musunuz?"):
-            raise typer.Exit()
+        # GitHub Actions için otomatik onay - kullanıcı etkileşimi yok
     
     console.print("[bold blue]Pipeline başlıyor...[/bold blue]")
     
