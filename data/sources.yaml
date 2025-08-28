@@ -26,19 +26,32 @@ rss_feeds:
     
     
     
-  - name: "Fotospor"
-    url: "https://www.fotospor.com/rss"
-    language: "tr"
-    category: "sports"
     
     
-  - name: "Spor Toto Süper Lig"
-    url: "https://www.tff.org/Resources/TFF/RSS/superlig.xml"
+    
+    
+    
+    
+  # High Quality Turkish Sources
+  - name: "FutbolArena"
+    url: "https://www.futbolarena.com/rss.xml"
     language: "tr"
     category: "football"
     
+  - name: "Sporx"
+    url: "https://www.sporx.com/rss"
+    language: "tr"
+    category: "sports"
     
+  - name: "HT Spor"
+    url: "https://www.htspor.com/rss"
+    language: "tr"
+    category: "sports"
     
+  - name: "Spor Toto"
+    url: "https://www.spor.gov.tr/rss"
+    language: "tr"
+    category: "sports"
     
   # International Sources
   - name: "BBC Sport Football"

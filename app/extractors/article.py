@@ -149,7 +149,7 @@ class ArticleExtractor:
         if not extracted:
             extracted = self.extract_with_readability(html, url)
         
-        if not extracted or not extracted.get('content') or len(extracted.get('content', '').strip()) < 50:
+        if not extracted or not extracted.get('content') or len(extracted.get('content', '').strip()) < 100:
             logger.warning(f"No meaningful content extracted from {url}")
             return None
         

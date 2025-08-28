@@ -78,10 +78,17 @@ class PostFormatter:
         if not title and not summary:
             return "Haber içeriği bulunamadı."
         
-        # Use summary if title is too short or missing
-        if len(title) < 10 and len(summary) > len(title):
+        # If title is too short or meaningless, use summary as title
+        if len(title) < 20 and len(summary) > len(title):
             title = summary
             summary = ""
+            
+        # Additional quality checks for title
+        if title and (title.endswith('...') or title.endswith('.') and len(title) < 30):
+            # If title seems incomplete, try to use summary
+            if summary and len(summary) > len(title):
+                title = summary
+                summary = ""
         
         # Format source
         domain = extract_domain(source_url)
