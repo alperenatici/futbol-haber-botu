@@ -12,9 +12,18 @@ class RateLimits(BaseModel):
     daily_post_cap: int = 30
 
 
+class RSSFeed(BaseModel):
+    url: str
+    name: str
+
 class Sources(BaseModel):
-    rss: List[str] = Field(default_factory=list)
+    rss_feeds: List[RSSFeed] = Field(default_factory=list)
     sites: List[Dict[str, Any]] = Field(default_factory=list)
+    
+    @property
+    def rss(self) -> List[str]:
+        """Get RSS URLs for backward compatibility."""
+        return [feed.url for feed in self.rss_feeds]
 
 
 class License(BaseModel):

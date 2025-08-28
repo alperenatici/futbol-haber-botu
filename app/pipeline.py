@@ -9,6 +9,7 @@ from app.utils.logging import get_logger
 from app.utils.dedupe import deduplicator
 from app.connectors.rss import RSSConnector, NewsItem
 from app.connectors.websites import WebsiteConnector
+from app.connectors.social import social_connector
 from app.extractors.article import ArticleExtractor
 from app.classify.rumor_official import classifier, NewsType
 from app.summarize.lexrank_tr import summarizer
@@ -75,6 +76,15 @@ class NewsPipeline:
                 all_items.extend(extracted_items)
         else:
             logger.warning("No website configs found")
+        
+        # Fetch social media content
+        try:
+            logger.info("Fetching social media content...")
+            social_items = social_connector.fetch_twitter_news(max_tweets_per_account=3)
+            logger.info(f"Social media returned {len(social_items)} items")
+            all_items.extend(social_items)
+        except Exception as e:
+            logger.error(f"Error fetching social media: {e}")
         
         logger.info(f"Total collected items before filtering: {len(all_items)}")
         
