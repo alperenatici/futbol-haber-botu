@@ -39,24 +39,39 @@ class ArticleExtractor:
             return None
     
     def extract_with_trafilatura(self, html: str, url: str) -> Optional[Dict[str, Any]]:
-        """Extract content using trafilatura."""
+        """Extract content using trafilatura with improved content quality."""
         try:
-            # Extract main content
+            # Extract main content with better settings
             content = trafilatura.extract(
                 html,
                 include_comments=False,
-                include_tables=False,
-                include_formatting=False
+                include_tables=True,  # Include tables for better content
+                include_formatting=True,  # Keep some formatting
+                favor_precision=True,  # Prefer complete content
+                favor_recall=False  # Avoid noise
             )
             
-            if not content:
+            if not content or len(content.strip()) < 50:
                 return None
             
             # Extract metadata
             metadata = trafilatura.extract_metadata(html)
             
+            # Clean and validate content
+            cleaned_content = clean_text(content)
+            
+            # Ensure content has meaningful sentences
+            sentences = [s.strip() for s in cleaned_content.split('.') if s.strip()]
+            if len(sentences) < 2:  # Need at least 2 sentences for meaningful content
+                return None
+                
+            # Reconstruct content with proper sentence structure
+            meaningful_content = '. '.join(sentences)
+            if not meaningful_content.endswith('.'):
+                meaningful_content += '.'
+            
             result = {
-                'content': clean_text(content),
+                'content': meaningful_content,
                 'title': metadata.title if metadata else None,
                 'author': metadata.author if metadata else None,
                 'date': metadata.date if metadata else None,
@@ -71,19 +86,43 @@ class ArticleExtractor:
             return None
     
     def extract_with_readability(self, html: str, url: str) -> Optional[Dict[str, Any]]:
-        """Extract content using readability as fallback."""
+        """Extract content using readability as fallback with improved text processing."""
         try:
             doc = Document(html)
             
             # Parse the extracted HTML
             soup = BeautifulSoup(doc.content(), 'html.parser')
-            content = soup.get_text()
+            
+            # Remove unwanted elements
+            for element in soup(['script', 'style', 'nav', 'header', 'footer', 'aside']):
+                element.decompose()
+            
+            # Extract text with better spacing
+            content = soup.get_text(separator=' ', strip=True)
             
             if not content or len(content.strip()) < 100:
                 return None
             
+            # Clean and structure content
+            cleaned_content = clean_text(content)
+            
+            # Ensure proper sentence structure
+            sentences = []
+            for sentence in cleaned_content.split('.'):
+                sentence = sentence.strip()
+                if sentence and len(sentence) > 10:  # Filter out very short fragments
+                    sentences.append(sentence)
+            
+            if len(sentences) < 2:
+                return None
+                
+            # Reconstruct with proper punctuation
+            meaningful_content = '. '.join(sentences)
+            if not meaningful_content.endswith('.'):
+                meaningful_content += '.'
+            
             result = {
-                'content': clean_text(content),
+                'content': meaningful_content,
                 'title': clean_text(doc.title()),
                 'author': None,
                 'date': None,
@@ -110,19 +149,34 @@ class ArticleExtractor:
         if not extracted:
             extracted = self.extract_with_readability(html, url)
         
-        if not extracted or not extracted.get('content'):
-            logger.warning(f"No content extracted from {url}")
+        if not extracted or not extracted.get('content') or len(extracted.get('content', '').strip()) < 50:
+            logger.warning(f"No meaningful content extracted from {url}")
             return None
         
         # Create NewsItem
         title = normalize_title(extracted.get('title', ''))
         content = extracted['content']
         
-        # Use first paragraph as summary if no description
+        # Create meaningful summary
         summary = extracted.get('description', '')
         if not summary and content:
-            paragraphs = content.split('\n\n')
-            summary = paragraphs[0] if paragraphs else content[:200]
+            # Extract first meaningful sentences for summary
+            sentences = [s.strip() for s in content.split('.') if s.strip() and len(s.strip()) > 20]
+            if sentences:
+                # Use first 2-3 sentences for summary, max 300 chars
+                summary_sentences = []
+                char_count = 0
+                for sentence in sentences[:3]:
+                    if char_count + len(sentence) < 300:
+                        summary_sentences.append(sentence)
+                        char_count += len(sentence)
+                    else:
+                        break
+                summary = '. '.join(summary_sentences)
+                if summary and not summary.endswith('.'):
+                    summary += '.'
+            else:
+                summary = content[:200] + '...' if len(content) > 200 else content
         
         summary = clean_text(summary)
         

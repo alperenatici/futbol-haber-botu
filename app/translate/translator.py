@@ -195,24 +195,42 @@ class TurkishTranslator:
         return word
     
     def translate_with_mymemory(self, text: str, source_lang: str = 'en', target_lang: str = 'tr') -> Optional[str]:
-        """Translate text using MyMemory free translation API."""
+        """Translate text using MyMemory free translation API with improved quality checks."""
         try:
+            # Clean and prepare text for translation
+            clean_text_input = text.strip()
+            if len(clean_text_input) < 5:
+                return None
+                
             # MyMemory API endpoint
             url = "https://api.mymemory.translated.net/get"
             params = {
-                'q': text[:500],  # Limit text length
-                'langpair': f'{source_lang}|{target_lang}'
+                'q': clean_text_input[:1000],  # Increased limit for better context
+                'langpair': f'{source_lang}|{target_lang}',
+                'de': 'futbolhaber@example.com',  # Optional email for better service
+                'mt': '1'  # Machine translation flag for better quality
             }
             
-            response = requests.get(url, params=params, timeout=10)
+            response = requests.get(url, params=params, timeout=15)
             response.raise_for_status()
             
             data = response.json()
             if data.get('responseStatus') == 200:
                 translated = data.get('responseData', {}).get('translatedText', '')
-                if translated and translated.lower() != text.lower():
-                    logger.info(f"MyMemory translation: {text[:30]} -> {translated[:30]}")
-                    return translated
+                
+                # Quality checks for translation
+                if translated and len(translated.strip()) > 5:
+                    # Check if translation is meaningful (not just copied)
+                    if translated.lower() != text.lower():
+                        # Additional quality check - ensure Turkish characters or meaningful change
+                        turkish_chars = set('çğıöşüÇĞIİÖŞÜ')
+                        has_turkish = any(char in translated for char in turkish_chars)
+                        word_ratio = len(translated.split()) / max(len(text.split()), 1)
+                        
+                        # Accept if has Turkish chars or reasonable word count ratio
+                        if has_turkish or (0.5 <= word_ratio <= 2.0):
+                            logger.info(f"MyMemory translation: {text[:30]} -> {translated[:30]}")
+                            return translated.strip()
                     
         except Exception as e:
             logger.warning(f"MyMemory translation failed: {e}")
@@ -220,44 +238,64 @@ class TurkishTranslator:
         return None
 
     def translate_text(self, text: str) -> str:
-        """Translate English text to Turkish using API and fallback to word mappings."""
+        """Translate English text to Turkish with improved quality and completeness."""
         if not self.needs_translation(text):
             return text
             
         logger.info(f"Translating text: {text[:50]}...")
         
-        # Try API translation first for better quality
-        api_translation = self.translate_with_mymemory(text)
-        if api_translation:
-            # Clean and validate API result
-            cleaned = clean_text(api_translation)
-            if len(cleaned) > 10 and cleaned.lower() != text.lower():
-                return cleaned
+        # Split long text into sentences for better translation
+        sentences = re.split(r'(?<=[.!?])\s+', text.strip())
+        translated_sentences = []
         
-        # Fallback to word mapping translation
-        logger.info("Using fallback word mapping translation")
+        for sentence in sentences:
+            sentence = sentence.strip()
+            if not sentence:
+                continue
+                
+            # Try API translation first for each sentence
+            api_translation = self.translate_with_mymemory(sentence)
+            if api_translation:
+                # Validate API translation quality
+                cleaned = clean_text(api_translation)
+                if len(cleaned) >= len(sentence) * 0.3:  # Ensure reasonable length
+                    translated_sentences.append(cleaned)
+                    continue
+            
+            # Fallback to word mapping translation for this sentence
+            logger.info(f"Using fallback translation for: {sentence[:30]}...")
+            
+            # Clean text
+            cleaned_text = clean_text(sentence)
+            
+            # Split into words while preserving punctuation
+            words = re.findall(r'\b\w+\b|\W+', cleaned_text)
+            
+            translated_words = []
+            for word in words:
+                if re.match(r'\w+', word):  # It's a word
+                    translated = self.translate_word(word)
+                    translated_words.append(translated)
+                else:  # It's punctuation/whitespace
+                    translated_words.append(word)
+            
+            sentence_result = ''.join(translated_words)
+            
+            # Clean up extra spaces
+            sentence_result = re.sub(r'\s+', ' ', sentence_result.strip())
+            
+            # Remove empty translations (like 'the' -> '')
+            sentence_result = re.sub(r'\s+', ' ', sentence_result)
+            sentence_result = re.sub(r'\s+([.,!?;:])', r'\1', sentence_result)
+            
+            if sentence_result.strip():
+                translated_sentences.append(sentence_result)
         
-        # Clean text
-        cleaned_text = clean_text(text)
+        # Join sentences back together
+        result = ' '.join(translated_sentences)
         
-        # Split into words while preserving punctuation
-        words = re.findall(r'\b\w+\b|\W+', cleaned_text)
-        
-        translated_words = []
-        for word in words:
-            if re.match(r'\w+', word):  # It's a word
-                translated = self.translate_word(word)
-                translated_words.append(translated)
-            else:  # It's punctuation/whitespace
-                translated_words.append(word)
-        
-        result = ''.join(translated_words)
-        
-        # Clean up extra spaces
+        # Final cleanup
         result = re.sub(r'\s+', ' ', result.strip())
-        
-        # Remove empty translations (like 'the' -> '')
-        result = re.sub(r'\s+', ' ', result)
         result = re.sub(r'\s+([.,!?;:])', r'\1', result)
         
         logger.info(f"Translation result: {result[:50]}...")
@@ -283,7 +321,7 @@ class TurkishTranslator:
         return translated
     
     def translate_summary(self, summary: str) -> str:
-        """Translate news summary to Turkish."""
+        """Translate news summary to Turkish with improved sentence structure."""
         if not summary:
             return summary
             
@@ -291,24 +329,20 @@ class TurkishTranslator:
         if not self.needs_translation(summary):
             return summary
             
-        # Split into sentences for better translation
-        sentences = re.split(r'[.!?]+', summary)
-        translated_sentences = []
+        # Use the improved translate_text method
+        translated = self.translate_text(summary)
         
-        for sentence in sentences:
-            sentence = sentence.strip()
-            if sentence:
-                translated = self.translate_text(sentence)
-                if translated and translated != sentence:
-                    translated_sentences.append(translated)
-                else:
-                    translated_sentences.append(sentence)
-        
-        result = '. '.join(translated_sentences)
-        if result and not result.endswith('.'):
-            result += '.'
+        # Ensure proper sentence structure
+        if translated:
+            # Fix sentence endings
+            translated = re.sub(r'\s*\.\s*\.+', '.', translated)  # Remove multiple dots
+            translated = re.sub(r'([.!?])\s*([A-ZÜÇĞIÖŞ])', r'\1 \2', translated)  # Space after punctuation
             
-        return result
+            # Ensure it ends with proper punctuation
+            if not re.search(r'[.!?]$', translated.strip()):
+                translated = translated.strip() + '.'
+                
+        return translated
 
 
 # Global translator instance
