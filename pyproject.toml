@@ -17,24 +17,18 @@ dependencies = [
     "trafilatura>=1.6.4",
     "beautifulsoup4>=4.12.2",
     "httpx[http2]>=0.25.0",
-    "tldextract>=5.0.1",
-    "python-dateutil>=2.8.2",
-    "pydantic>=2.5.0",
     "langdetect>=1.0.9",
+    "pillow>=10.0.0",
+    "httpx>=0.25.0",
+    "trafilatura>=1.6.4",
+    "tldextract>=5.0.1",
     "rapidfuzz>=3.5.2",
     "readability-lxml>=0.8.1",
     "sumy>=0.11.0",
-    "nltk>=3.8.1",
-    "Pillow>=10.1.0",
-    "requests>=2.31.0",
-    "tweepy>=4.14.0",
     "pytz>=2023.3",
     "typer>=0.9.0",
     "rich>=13.7.0",
-    "pyyaml>=6.0.1",
-    "schedule>=1.2.0",
-    "python-dotenv",
-    "langdetect>=1.0.0"
+    "schedule>=1.2.0"
 ]
 
 [project.optional-dependencies]

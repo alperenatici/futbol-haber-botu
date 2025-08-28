@@ -114,7 +114,7 @@ class NewsDeduplicator:
                 (content_hash, cutoff.isoformat())
             )
             if cursor.fetchone():
-                logger.debug(f"Duplicate content found: {title}")
+                logger.info(f"Duplicate content found: {title[:50]}...")
                 return True
         
         return False

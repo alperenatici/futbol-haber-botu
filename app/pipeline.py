@@ -16,6 +16,9 @@ from app.summarize.lexrank_tr import summarizer
 from app.summarize.templates_tr import templates
 from app.translate.translator import translator
 from app.filters.turkish_relevance import turkish_filter
+from app.extractors.entity_extractor import entity_extractor
+from app.images.smart_image_selector import smart_image_selector
+from app.hashtags.dynamic_hashtags import hashtag_generator
 from app.images.openverse import openverse_client
 from app.images.card import card_generator
 from app.publisher.x_client import x_client
@@ -157,15 +160,27 @@ class NewsPipeline:
                 summary_data = summarizer.summarize_news_item(translated_item)
                 processed.summary_data = summary_data
                 
-                # Format for posting
+                # Extract entities and generate dynamic hashtags
+                entities = entity_extractor.extract_entities(f"{translated_item.title} {translated_item.summary}")
+                dynamic_hashtags = hashtag_generator.generate_hashtags(
+                    translated_item.title, 
+                    translated_item.summary, 
+                    ['#futbol']
+                )
+                
+                # Format for posting with dynamic hashtags
                 formatted_text = templates.format_post(
                     processed.summary_data['short_title'],
                     processed.summary_data['summary'],
                     processed.original.url,
-                    processed.news_type
+                    processed.news_type,
+                    hashtags=dynamic_hashtags
                 )
                 
                 processed.formatted_text = formatter.clean_text_for_posting(formatted_text)
+                
+                # Store entities for image selection
+                processed.entities = entities
                 
             except Exception as e:
                 logger.error(f"Error summarizing item {processed.original.id}: {e}")
@@ -180,27 +195,21 @@ class NewsPipeline:
         
         for processed in items:
             try:
-                # Try to find Openverse image if enabled
-                if settings.config.license.image_preference == "openverse_only":
-                    openverse_image = openverse_client.find_football_image(
-                        processed.original.title,
-                        processed.original.summary
-                    )
-                    processed.openverse_image = openverse_image
-                
-                # Generate text card
-                image_path = card_generator.generate_card(
-                    processed.summary_data['short_title'] if processed.summary_data else processed.original.title,
-                    processed.summary_data['summary'] if processed.summary_data else processed.original.summary,
-                    processed.news_type,
-                    processed.original.source,
-                    processed.openverse_image
+                # Use smart image selector to find relevant images
+                image_path = smart_image_selector.select_best_image(
+                    processed.original.url,
+                    processed.original.title,
+                    processed.original.summary
                 )
                 
-                processed.image_path = image_path
-                
+                if image_path:
+                    processed.image_path = image_path
+                    logger.info(f"Selected image for: {processed.original.title[:50]}...")
+                else:
+                    logger.warning(f"No image found for: {processed.original.title[:50]}...")
+                    
             except Exception as e:
-                logger.error(f"Error generating image for item {processed.original.id}: {e}")
+                logger.error(f"Error selecting image for {processed.original.id}: {e}")
                 processed.image_path = None
         
         return items
@@ -215,23 +224,30 @@ class NewsPipeline:
         
         logger.info("Publishing news items...")
         
-        published_count = 0
+        posted_count = 0
         for processed in items:
             try:
-                # Post to X API using v2 (Free tier supports 500 writes/month)
-                result = x_client.post_news(
-                    text=processed.formatted_text,
-                    image_path=processed.image_path,
-                    news_url=processed.original.url,
-                    title=processed.original.title
-                )
+                # Upload media if image exists
+                media_ids = None
+                if hasattr(processed, 'image_path') and processed.image_path and processed.image_path.exists():
+                    try:
+                        media_id = x_client.upload_media(str(processed.image_path))
+                        if media_id:
+                            media_ids = [media_id]
+                            logger.info(f"Uploaded image for: {processed.original.title[:50]}...")
+                    except Exception as e:
+                        logger.error(f"Error uploading media: {e}")
+                
+                # Post tweet
+                result = x_client.post_tweet(processed.formatted_text, media_ids)
                 
                 if result:
-                    processed.post_result = result
-                    published_count += 1
-                    logger.info(f"Published to X: {processed.original.title[:50]}...")
+                    processed.posted = True
+                    processed.post_url = result.get('url')
+                    logger.info(f"Posted: {processed.formatted_text[:50]}... -> {result.get('url')}")
+                    posted_count += 1
                 else:
-                    logger.warning(f"Failed to publish: {processed.original.title[:50]}...")
+                    logger.error(f"Failed to post: {processed.formatted_text[:50]}...")
                 
                 # Small delay between posts
                 import time
@@ -240,7 +256,7 @@ class NewsPipeline:
             except Exception as e:
                 logger.error(f"Error publishing item {processed.original.id}: {e}")
         
-        logger.info(f"Published {published_count} items")
+        logger.info(f"Published {posted_count} items")
         return items
     
     def run_pipeline(self, dry_run: bool = False, max_items: int = 10) -> List[ProcessedNewsItem]:

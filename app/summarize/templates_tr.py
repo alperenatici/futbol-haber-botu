@@ -133,7 +133,7 @@ class TurkishTemplates:
         return text
     
     def format_post(self, title: str, summary: str, source_url: str,
-                   news_type: NewsType, max_length: int = 280) -> str:
+                   news_type: NewsType, hashtags: List[str] = None, max_length: int = 280) -> str:
         """Format complete social media post."""
         # Start with template formatting
         formatted_text = self.format_with_template(title, summary, news_type)
@@ -144,8 +144,8 @@ class TurkishTemplates:
         # Add source
         formatted_text = self.add_source_footer(formatted_text, source_url)
         
-        # Add hashtags
-        formatted_text = self.add_hashtags(formatted_text)
+        # Add hashtags (use provided hashtags or default)
+        formatted_text = self.add_hashtags(formatted_text, hashtags)
         
         # Ensure it fits within character limit
         if len(formatted_text) > max_length:
