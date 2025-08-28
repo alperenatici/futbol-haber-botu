@@ -43,9 +43,17 @@ class XClient:
                 self.access_token_secret
             )
             
-            # Use only v1.1 API for both posting and media upload
+            # Use v2 API for posting (Free tier supports this)
+            self._client = tweepy.Client(
+                consumer_key=self.api_key,
+                consumer_secret=self.api_secret,
+                access_token=self.access_token,
+                access_token_secret=self.access_token_secret,
+                wait_on_rate_limit=True
+            )
+            
+            # Keep v1.1 API for media upload only
             self._api_v1 = tweepy.API(auth, wait_on_rate_limit=True)
-            self._client = None  # Disable v2 client
             
             logger.info("X/Twitter clients initialized successfully")
             
@@ -102,23 +110,20 @@ class XClient:
     
     def post_tweet(self, text: str, media_ids: Optional[List[str]] = None) -> Optional[Dict[str, Any]]:
         """Post a tweet with optional media."""
-        if not self._api_v1:
+        if not self._client:
             self._init_clients()
         
         try:
             logger.info(f"Posting tweet: {text[:50]}...")
             
-            # Create tweet using v1.1 API
-            if media_ids:
-                status = self._api_v1.update_status(
-                    status=text,
-                    media_ids=media_ids
-                )
-            else:
-                status = self._api_v1.update_status(status=text)
+            # Create tweet using v2 API (Free tier supports this)
+            response = self._client.create_tweet(
+                text=text,
+                media_ids=media_ids
+            )
             
-            if status:
-                tweet_id = status.id_str
+            if response and response.data:
+                tweet_id = response.data['id']
                 tweet_url = f"https://twitter.com/user/status/{tweet_id}"
                 
                 # Update tracking
