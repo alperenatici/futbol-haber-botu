@@ -51,7 +51,13 @@ class NewsPipeline:
         all_items = []
         
         # Fetch RSS feeds
+        print(f"DEBUG: Config object: {settings.config}")
+        print(f"DEBUG: Sources object: {settings.config.sources}")
+        print(f"DEBUG: RSS feeds: {settings.config.sources.rss_feeds}")
+        
         rss_urls = settings.config.sources.rss
+        print(f"DEBUG: RSS URLs property: {rss_urls}")
+        
         if rss_urls:
             logger.info(f"Fetching {len(rss_urls)} RSS feeds")
             for i, url in enumerate(rss_urls):
@@ -77,14 +83,8 @@ class NewsPipeline:
         else:
             logger.warning("No website configs found")
         
-        # Fetch social media content
-        try:
-            logger.info("Fetching social media content...")
-            social_items = social_connector.fetch_twitter_news(max_tweets_per_account=3)
-            logger.info(f"Social media returned {len(social_items)} items")
-            all_items.extend(social_items)
-        except Exception as e:
-            logger.error(f"Error fetching social media: {e}")
+        # Skip social media due to X API limitations
+        logger.info("Skipping social media (X API Free tier limitations)")
         
         logger.info(f"Total collected items before filtering: {len(all_items)}")
         

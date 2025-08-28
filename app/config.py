@@ -77,8 +77,10 @@ class Settings:
         if config_path.exists():
             with open(config_path, 'r', encoding='utf-8') as f:
                 data = yaml.safe_load(f)
+                print(f"DEBUG: Loaded config data: {data}")
                 return Config(**data)
         else:
+            print(f"DEBUG: Config file not found at {config_path}")
             # Return default config
             return Config()
     
