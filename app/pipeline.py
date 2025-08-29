@@ -8,13 +8,15 @@ from app.config import settings
 from app.utils.logging import get_logger
 from app.utils.dedupe import deduplicator
 from app.connectors.rss import RSSConnector, NewsItem
-from app.connectors.websites import WebsiteConnector
-from app.connectors.social import social_connector
+from app.connectors.twitter import TwitterConnector
+from app.processors.tweet_processor import TweetProcessor
 from app.extractors.article import ArticleExtractor
 from app.classify.rumor_official import classifier, NewsType
 from app.summarize.lexrank_tr import summarizer
 from app.summarize.templates_tr import templates
 from app.translate.translator import translator
+from app.connectors.websites import WebsiteConnector
+from app.connectors.social import social_connector
 from app.filters.turkish_relevance import turkish_filter
 from app.extractors.entity_extractor import entity_extractor
 from app.images.smart_image_selector import smart_image_selector
@@ -46,8 +48,8 @@ class NewsPipeline:
     """Main news processing pipeline."""
     
     def __init__(self):
-        self.rss_connector = RSSConnector()
-        self.website_connector = WebsiteConnector()
+        self.twitter_connector = TwitterConnector()
+        self.tweet_processor = TweetProcessor()
         self.article_extractor = ArticleExtractor()
         
     def ingest_news(self) -> List[NewsItem]:
@@ -56,25 +58,26 @@ class NewsPipeline:
         
         all_items = []
         
-        # Fetch RSS feeds
-        rss_urls = settings.config.sources.rss
+        # Fetch tweets from monitored accounts
+        logger.info("Fetching tweets from monitored X/Twitter accounts...")
         
-        if rss_urls:
-            logger.info(f"Fetching {len(rss_urls)} RSS feeds")
-            for i, url in enumerate(rss_urls):
-                logger.info(f"RSS {i+1}/{len(rss_urls)}: {url}")
-            rss_items = self.rss_connector.fetch_all_feeds(rss_urls)
-            logger.info(f"RSS feeds returned {len(rss_items)} items")
-            all_items.extend(rss_items)
-        else:
-            logger.warning("No RSS URLs configured")
-        
-        # Fetch website articles
-        site_configs = settings.config.sources.sites
-        if site_configs:
-            logger.info(f"Scraping {len(site_configs)} websites")
-            article_urls = self.website_connector.fetch_all_sites(site_configs)
-            logger.info(f"Website scraping returned {len(article_urls)} URLs")
+        try:
+            # Get tweets from last hour
+            tweets = self.twitter_connector.get_all_monitored_tweets(since_hours=1)
+            
+            # Filter for quality and sports relevance
+            filtered_tweets = self.twitter_connector.filter_quality_tweets(tweets)
+            logger.info(f"Found {len(filtered_tweets)} quality tweets from {len(tweets)} total")
+            
+            # Process tweets into NewsItems
+            tweet_news_items = self.tweet_processor.process_tweets_batch(filtered_tweets)
+            all_items.extend(tweet_news_items)
+            
+            logger.info(f"Successfully processed {len(tweet_news_items)} news items from X/Twitter")
+            
+        except Exception as e:
+            logger.error(f"Error fetching tweets: {e}")
+            logger.warning("Continuing without Twitter data")
             
             # Extract articles from URLs
             if article_urls:

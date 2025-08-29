@@ -1,193 +1,68 @@
 language: tr
-rss_feeds:
-  # Turkish Media
-    
-    
-  - name: "Hürriyet Spor"
-    url: "https://www.hurriyet.com.tr/rss/spor"
+rss_feeds: []
+rss_sources: []
+
+# X/Twitter accounts to follow for sports news
+twitter_accounts:
+  - username: "futbolarena"
+    name: "FutbolArena"
+    category: "football"
     language: "tr"
+    
+  - username: "sporx"
+    name: "Sporx"
     category: "sports"
-    
-  - name: "CNN Türk Spor"
-    url: "https://www.cnnturk.com/feed/rss/spor/news"
     language: "tr"
+    
+  - username: "ntvspor"
+    name: "NTV Spor"
     category: "sports"
-    
-  - name: "NTV Spor"
-    url: "https://www.ntv.com.tr/spor.rss"
     language: "tr"
+    
+  - username: "cnnturk"
+    name: "CNN Türk"
+    category: "news"
+    language: "tr"
+    
+  - username: "ajansspor"
+    name: "Ajans Spor"
     category: "sports"
-    
-    
-  - name: "Sabah Spor"
-    url: "https://www.sabah.com.tr/rss/spor.xml"
     language: "tr"
+    
+  - username: "fotomac_com_tr"
+    name: "Fotomac"
     category: "sports"
-    
-    
-    
-    
-    
-    
-    
-    
-    
-  # High Quality Turkish Sources
-  - name: "FutbolArena"
-    url: "https://www.futbolarena.com/rss.xml"
     language: "tr"
-    category: "football"
     
-  - name: "Sporx"
-    url: "https://www.sporx.com/rss"
+  - username: "sozcu"
+    name: "Sözcü"
+    category: "news"
     language: "tr"
+    
+  - username: "htspor"
+    name: "HT Spor"
     category: "sports"
-    
-  - name: "HT Spor"
-    url: "https://www.htspor.com/rss"
     language: "tr"
+    
+  - username: "trtspor"
+    name: "TRT Spor"
     category: "sports"
-    
-  - name: "Spor Toto"
-    url: "https://www.spor.gov.tr/rss"
     language: "tr"
+    
+  - username: "fanatik"
+    name: "Fanatik"
     category: "sports"
-    
-  # International Sources
-  - name: "BBC Sport Football"
-    url: "https://feeds.bbci.co.uk/sport/football/rss.xml"
-    language: "en"
-    category: "football"
-    
-    
-  - name: "ESPN FC"
-    url: "https://www.espn.com/espn/rss/soccer/news"
-    language: "en"
-    category: "football"
-    
-    
-  - name: "Football Italia"
-    url: "https://football-italia.net/feed/"
-    language: "en"
-    category: "football"
-    
-  - name: "Marca English"
-    url: "https://e00-marca.uecdn.es/rss/en/index.xml"
-    language: "en"
-    category: "football"
-    
-  - name: "90min"
-    url: "https://www.90min.com/posts.rss"
-    language: "en"
-    category: "football"
-    
-  - name: "CaughtOffside"
-    url: "https://www.caughtoffside.com/feed/"
-    language: "en"
-    category: "football"
-    
-  - name: "101 Great Goals"
-    url: "https://www.101greatgoals.com/feed/"
-    language: "en"
-    category: "football"
-    
-  - name: "FootballFanCast"
-    url: "https://www.footballfancast.com/feed/"
-    language: "en"
-    category: "football"
-    
-  - name: "Sportslens"
-    url: "https://sportslens.com/feed/"
-    language: "en"
-    category: "football"
-    
-  - name: "The Guardian Football"
-    url: "https://www.theguardian.com/football/rss"
-    language: "en"
-    category: "football"
-    
-    
-    
-  - name: "World Soccer"
-    url: "https://www.worldsoccer.com/feed"
-    language: "en"
-    category: "football"
-    
-  # Additional Turkish Sources
-  - name: "Futboo"
-    url: "https://www.futboo.com/rss.xml"
     language: "tr"
-    category: "football"
     
-  - name: "Futboo Son Dakika"
-    url: "https://www.futboo.com/sondakika.xml"
-    language: "tr"
-    category: "football"
-    
-  - name: "Futboo Transfer"
-    url: "https://www.futboo.com/rss_transfer_2347.xml"
-    language: "tr"
-    category: "football"
-    
-  - name: "Spormaraton Son Dakika"
-    url: "https://www.spormaraton.com/rss/sondakika/"
-    language: "tr"
+  - username: "aspor"
+    name: "A Spor"
     category: "sports"
-    
-  - name: "Fotomac"
-    url: "https://www.fotomac.com.tr/rss/anasayfa.xml"
     language: "tr"
+    
+  - username: "beinsports_tr"
+    name: "beIN Sports Türkiye"
     category: "sports"
-    
-  - name: "Fotomac Süper Lig"
-    url: "https://www.fotomac.com.tr/rss/superlig.xml"
     language: "tr"
-    category: "football"
-    
-  - name: "Fotomac Galatasaray"
-    url: "https://www.fotomac.com.tr/rss/galatasaray.xml"
-    language: "tr"
-    category: "football"
-    
-  - name: "Fotomac Fenerbahçe"
-    url: "https://www.fotomac.com.tr/rss/fenerbahce.xml"
-    language: "tr"
-    category: "football"
-    
-  - name: "Fotomac Beşiktaş"
-    url: "https://www.fotomac.com.tr/rss/besiktas.xml"
-    language: "tr"
-    category: "football"
-    
-  - name: "Fotomac Trabzonspor"
-    url: "https://www.fotomac.com.tr/rss/trabzonspor.xml"
-    language: "tr"
-    category: "football"
-    
-  - name: "Ajans Spor"
-    url: "https://ajansspor.com/rss"
-    language: "tr"
-    category: "sports"
-    
-  - name: "NTV Spor Futbol"
-    url: "https://www.ntvspor.net/rss/kategori/futbol"
-    language: "tr"
-    category: "football"
-    
-  - name: "NTV Spor Dünyadan Futbol"
-    url: "https://www.ntvspor.net/rss/kategori/dunyadan-futbol"
-    language: "tr"
-    category: "football"
-    
-  - name: "Sözcü Spor"
-    url: "https://www.sozcu.com.tr/feeds-rss-category-spor"
-    language: "tr"
-    category: "sports"
-    
-  - name: "Sözcü Futbol"
-    url: "https://www.sozcu.com.tr/feeds-rss-category-futbol"
-    language: "tr"
-    category: "football"
 license:
   image_preference: card_only   # 'card_only' | 'openverse_only'
 post:
