@@ -62,8 +62,8 @@ class NewsPipeline:
         logger.info("Fetching tweets from monitored X/Twitter accounts...")
         
         try:
-            # Get tweets from last hour
-            tweets = self.twitter_connector.get_all_monitored_tweets(since_hours=1)
+            # Get tweets from last 6 hours (less frequent checks)
+            tweets = self.twitter_connector.get_all_monitored_tweets(since_hours=6)
             
             # Filter for quality and sports relevance
             filtered_tweets = self.twitter_connector.filter_quality_tweets(tweets)

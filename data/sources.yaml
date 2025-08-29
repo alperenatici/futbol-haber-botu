@@ -4,65 +4,20 @@ rss_sources: []
 
 # X/Twitter accounts to follow for sports news
 twitter_accounts:
+  - username: "nexustransfer"
+    account_category: "football"
+  - username: "SportsDigitale"
+    account_category: "sports"
+  - username: "yagosabuncuoglu"
+    account_category: "football"
+  - username: "KramponSport"
+    account_category: "sports"
   - username: "futbolarena"
-    name: "FutbolArena"
-    category: "football"
-    language: "tr"
-    
-  - username: "sporx"
-    name: "Sporx"
-    category: "sports"
-    language: "tr"
-    
-  - username: "ntvspor"
-    name: "NTV Spor"
-    category: "sports"
-    language: "tr"
-    
-  - username: "cnnturk"
-    name: "CNN Türk"
-    category: "news"
-    language: "tr"
-    
-  - username: "ajansspor"
-    name: "Ajans Spor"
-    category: "sports"
-    language: "tr"
-    
-  - username: "fotomac_com_tr"
-    name: "Fotomac"
-    category: "sports"
-    language: "tr"
-    
-  - username: "sozcu"
-    name: "Sözcü"
-    category: "news"
-    language: "tr"
-    
-  - username: "htspor"
-    name: "HT Spor"
-    category: "sports"
-    language: "tr"
-    
-  - username: "trtspor"
-    name: "TRT Spor"
-    category: "sports"
-    language: "tr"
-    
-  - username: "fanatik"
-    name: "Fanatik"
-    category: "sports"
-    language: "tr"
-    
-  - username: "aspor"
-    name: "A Spor"
-    category: "sports"
-    language: "tr"
-    
-  - username: "beinsports_tr"
-    name: "beIN Sports Türkiye"
-    category: "sports"
-    language: "tr"
+    account_category: "football"
+  - username: "bbosports"
+    account_category: "sports"
+  - username: "TransferWeb1"
+    account_category: "football"
 license:
   image_preference: card_only   # 'card_only' | 'openverse_only'
 post:

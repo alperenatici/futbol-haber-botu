@@ -35,7 +35,7 @@ class TweetProcessor:
             
             # Translate if not Turkish
             if language != 'tr':
-                translated_text = self.translator.translate_text(cleaned_text, source_lang=language)
+                translated_text = self.translator.translate_text(cleaned_text)
                 if translated_text and len(translated_text) > 10:
                     content = translated_text
                     title = self._extract_title_from_text(translated_text)
@@ -55,6 +55,7 @@ class TweetProcessor:
             
             # Create NewsItem
             news_item = NewsItem(
+                id=f"tweet_{tweet.get('id', 'unknown')}",
                 title=title,
                 content=content,
                 summary=summary,

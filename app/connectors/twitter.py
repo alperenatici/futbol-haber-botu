@@ -136,12 +136,19 @@ class TwitterConnector:
         """Get tweets from all monitored accounts"""
         all_tweets = []
         
-        for account in self.accounts:
+        # Limit to first 3 accounts to avoid rate limits
+        limited_accounts = self.accounts[:3]
+        
+        for account in limited_accounts:
             username = account.get('username')
             if not username:
                 continue
             
-            tweets = self.get_user_tweets(username, count=2, since_hours=since_hours)
+            tweets = self.get_user_tweets(username, count=1, since_hours=since_hours)
+            
+            # Add delay between requests to avoid rate limiting
+            import time
+            time.sleep(2)
             
             # Add account metadata to tweets
             for tweet in tweets:
