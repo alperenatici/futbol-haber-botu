@@ -7,7 +7,7 @@ from datetime import datetime
 import re
 
 from app.translate.translator import TurkishTranslator
-from app.models.news_item import NewsItem
+from app.connectors.rss import NewsItem
 
 logger = logging.getLogger(__name__)
 

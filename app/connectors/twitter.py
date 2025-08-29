@@ -77,7 +77,8 @@ class TwitterConnector:
         
         try:
             # Calculate since_id based on last check
-            since_time = datetime.utcnow() - timedelta(hours=since_hours)
+            from datetime import timezone
+            since_time = datetime.now(timezone.utc) - timedelta(hours=since_hours)
             
             # Get user by username
             user = self.client.get_user(username=username)
@@ -122,7 +123,7 @@ class TwitterConnector:
                 }
                 
                 processed_tweets.append(processed_tweet)
-                self.last_check[tweet_key] = datetime.utcnow()
+                self.last_check[tweet_key] = datetime.now(timezone.utc)
             
             logger.info(f"Found {len(processed_tweets)} new tweets from @{username}")
             return processed_tweets
@@ -140,7 +141,7 @@ class TwitterConnector:
             if not username:
                 continue
             
-            tweets = self.get_user_tweets(username, count=5, since_hours=since_hours)
+            tweets = self.get_user_tweets(username, count=2, since_hours=since_hours)
             
             # Add account metadata to tweets
             for tweet in tweets:
