@@ -79,15 +79,21 @@ class NewsDeduplicator:
         return hashlib.sha256(normalized.encode('utf-8')).hexdigest()[:16]
     
     def hash_content(self, title: str, summary: str) -> str:
-        """Generate hash for content."""
+        """Generate hash for content with Turkish similarity detection."""
         # Normalize text for comparison
         content = f"{title.lower().strip()} {summary.lower().strip()}"
         # Remove extra whitespace and common words
         content = ' '.join(content.split())
         
-        # Remove common words that might cause false duplicates
-        common_words = {'the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by', 'from', 'up', 'about', 'into', 'through', 'during', 'before', 'after', 'above', 'below', 'between', 'among', 'is', 'are', 'was', 'were', 'be', 'been', 'being', 'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would', 'could', 'should', 'may', 'might', 'must', 'can', 'shall'}
-        words = [word for word in content.split() if word not in common_words and len(word) > 2]
+        # Remove common Turkish words that might cause false duplicates
+        turkish_common_words = {
+            'bir', 'bu', 'şu', 'o', 've', 'ile', 'için', 'da', 'de', 'ta', 'te', 'den', 'dan', 'ten', 'tan',
+            'nin', 'nın', 'nun', 'nün', 'in', 'ın', 'un', 'ün', 'e', 'a', 'ye', 'ya', 'i', 'ı', 'u', 'ü',
+            'olan', 'oldu', 'olur', 'olacak', 'var', 'yok', 'gibi', 'kadar', 'daha', 'en', 'çok', 'az',
+            'galatasaray', 'fenerbahçe', 'beşiktaş', 'trabzonspor', 'transfer', 'futbol', 'maç', 'takım',
+            'oyuncu', 'teknik', 'direktör', 'antrenör', 'sezon', 'lig', 'süper', 'spor', 'haber', 'son'
+        }
+        words = [word for word in content.split() if word not in turkish_common_words and len(word) > 2]
         content = ' '.join(words)
         
         return hashlib.sha256(content.encode('utf-8')).hexdigest()[:16]

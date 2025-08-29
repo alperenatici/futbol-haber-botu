@@ -141,7 +141,8 @@ def run_once(
 def run_continuous():
     """Bot'u sürekli çalışma modunda başlat (7/24)."""
     console.print("[bold blue]Bot sürekli çalışma modunda başlatılıyor...[/bold blue]")
-    console.print("[green]Her 30 dakikada bir RSS kaynaklarını tarayacak[/green]")
+    console.print("[green]Her 15 dakikada (900 saniye) bir X hesaplarını tarayacak[/green]")
+    console.print("[yellow]Aynı haberler tekrar paylaşılmayacak - benzerlik kontrolü aktif[/yellow]")
     console.print("[dim]Durdurmak için Ctrl+C kullanın[/dim]\n")
     
     try:

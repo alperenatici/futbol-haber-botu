@@ -36,10 +36,10 @@ class ContinuousRunner:
         try:
             logger.info("Scheduled pipeline run başlıyor...")
             
-            # Pipeline'ı çalıştır
+            # Pipeline'ı çalıştır - gerçek paylaşım aktif
             results = self.pipeline.run_pipeline(
-                dry_run=False,
-                max_items=5  # Her seferinde maksimum 5 haber
+                dry_run=False,  # Gerçek paylaşım
+                max_items=3     # Rate limit için az haber al
             )
             
             self.last_run = datetime.now()
@@ -47,6 +47,11 @@ class ContinuousRunner:
             if results:
                 posted_count = sum(1 for item in results if getattr(item, 'posted', False))
                 logger.info(f"Pipeline tamamlandı: {len(results)} haber işlendi, {posted_count} haber paylaşıldı")
+                
+                # Her haber paylaşımından sonra 900 saniye bekle
+                if posted_count > 0:
+                    logger.info("Haber paylaşıldı, 900 saniye bekleniyor...")
+                    time.sleep(900)  # 15 dakika bekle
             else:
                 logger.info("Pipeline tamamlandı: Yeni haber bulunamadı")
                 
@@ -55,16 +60,10 @@ class ContinuousRunner:
     
     def setup_schedule(self):
         """Çalışma programını ayarla."""
-        # Her 30 dakikada bir çalış
-        schedule.every(30).minutes.do(self.run_pipeline_job)
+        # Her 15 dakikada (900 saniye) bir çalış - rate limit'e takılmamak için
+        schedule.every(15).minutes.do(self.run_pipeline_job)
         
-        # Yoğun saatlerde daha sık çalış (09:00-22:00 arası her 15 dakika)
-        schedule.every().hour.at(":00").do(self._check_peak_hours)
-        schedule.every().hour.at(":15").do(self._check_peak_hours)
-        schedule.every().hour.at(":30").do(self._check_peak_hours)
-        schedule.every().hour.at(":45").do(self._check_peak_hours)
-        
-        logger.info("Scheduler ayarlandı: Her 30 dakikada bir çalışacak")
+        logger.info("Scheduler ayarlandı: Her 15 dakikada (900 saniye) bir çalışacak")
     
     def _check_peak_hours(self):
         """Yoğun saatlerde ek çalışma kontrolü."""
