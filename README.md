@@ -268,7 +268,7 @@ MIT License - Detaylar için `LICENSE` dosyasına bakın.
 
 - 🐛 Bug reports: GitHub Issues
 - 💡 Feature requests: GitHub Discussions
-- 📧 İletişim: [email@example.com]
+- 📧 İletişim: [alperenatici@icloud.com]
 
 ## Changelog
 
