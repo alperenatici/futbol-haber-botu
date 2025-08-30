@@ -58,9 +58,12 @@ class NewsPipeline:
         
         all_items = []
         
+        # Sadece Twitter hesaplarından haber toplama
+        # RSS ve web sitesi toplama devre dışı bırakıldı
+        logger.info("Sadece Twitter hesaplarından haber toplanacak...")
+        
         # Fetch tweets from monitored accounts
         logger.info("Fetching tweets from monitored X/Twitter accounts...")
-        
         try:
             # Get tweets from last 6 hours (less frequent checks)
             tweets = self.twitter_connector.get_all_monitored_tweets(since_hours=6)
@@ -78,14 +81,6 @@ class NewsPipeline:
         except Exception as e:
             logger.error(f"Error fetching tweets: {e}")
             logger.warning("Continuing without Twitter data")
-            
-            # Extract articles from URLs
-            if article_urls:
-                extracted_items = self.article_extractor.extract_multiple(article_urls[:20])  # Limit to 20
-                logger.info(f"Article extraction returned {len(extracted_items)} items")
-                all_items.extend(extracted_items)
-        else:
-            logger.warning("No website configs found")
         
         # Skip social media due to X API limitations
         logger.info("Skipping social media (X API Free tier limitations)")

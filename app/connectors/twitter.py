@@ -49,20 +49,28 @@ class TwitterConnector:
                 logger.error("Missing Twitter API credentials")
                 return
             
+            # Bearer token is optional for v1.1 API but recommended
+            if not bearer_token:
+                logger.warning("Bearer token not found, using OAuth 1.1 only")
+            
             # Setup API v1.1 for compatibility
             auth = tweepy.OAuthHandler(api_key, api_secret)
             auth.set_access_token(access_token, access_token_secret)
             self.api = tweepy.API(auth, wait_on_rate_limit=True)
             
-            # Setup API v2 client
-            self.client = tweepy.Client(
-                bearer_token=bearer_token,
-                consumer_key=api_key,
-                consumer_secret=api_secret,
-                access_token=access_token,
-                access_token_secret=access_token_secret,
-                wait_on_rate_limit=True
-            )
+            # Setup API v2 client only if bearer token is available
+            if bearer_token:
+                self.client = tweepy.Client(
+                    bearer_token=bearer_token,
+                    consumer_key=api_key,
+                    consumer_secret=api_secret,
+                    access_token=access_token,
+                    access_token_secret=access_token_secret,
+                    wait_on_rate_limit=True
+                )
+            else:
+                self.client = None
+                logger.warning("API v2 client not initialized due to missing bearer token")
             
             logger.info("Twitter API connection established")
             
@@ -71,9 +79,14 @@ class TwitterConnector:
     
     def get_user_tweets(self, username: str, count: int = 10, since_hours: int = 24) -> List[Dict]:
         """Get recent tweets from a specific user"""
-        if not self.client:
-            logger.error("Twitter client not initialized")
+        # Fallback to API v1.1 if v2 client is not available
+        if not self.client and not self.api:
+            logger.error("Neither Twitter client nor API initialized")
             return []
+        
+        # Use API v1.1 as fallback
+        if not self.client and self.api:
+            return self._get_user_tweets_v1(username, count, since_hours)
         
         try:
             # Calculate since_id based on last check
@@ -216,3 +229,53 @@ class TwitterConnector:
             filtered.append(tweet)
         
         return filtered
+    
+    def _get_user_tweets_v1(self, username: str, count: int = 10, since_hours: int = 24) -> List[Dict]:
+        """Get recent tweets using API v1.1 as fallback"""
+        try:
+            from datetime import timezone
+            since_time = datetime.now(timezone.utc) - timedelta(hours=since_hours)
+            
+            # Get user timeline using API v1.1
+            tweets = self.api.user_timeline(
+                screen_name=username,
+                count=count,
+                exclude_replies=True,
+                include_rts=False,
+                tweet_mode='extended'
+            )
+            
+            processed_tweets = []
+            for tweet in tweets:
+                # Filter by time
+                if tweet.created_at.replace(tzinfo=timezone.utc) < since_time:
+                    continue
+                
+                # Check if we've already processed this tweet
+                tweet_key = f"{username}_{tweet.id}"
+                if tweet_key in self.last_check:
+                    continue
+                
+                processed_tweet = {
+                    'id': tweet.id,
+                    'text': tweet.full_text,
+                    'created_at': tweet.created_at.replace(tzinfo=timezone.utc),
+                    'username': username,
+                    'url': f"https://twitter.com/{username}/status/{tweet.id}",
+                    'metrics': {
+                        'retweet_count': tweet.retweet_count,
+                        'favorite_count': tweet.favorite_count
+                    },
+                    'entities': tweet.entities,
+                    'language': self._detect_language(tweet.full_text)
+                }
+                
+                processed_tweets.append(processed_tweet)
+                self.last_check[tweet_key] = datetime.now(timezone.utc)
+            
+            logger.info(f"Found {len(processed_tweets)} new tweets from @{username} (API v1.1)")
+            return processed_tweets
+            
+        except Exception as e:
+            logger.error(f"Error fetching tweets from @{username} using API v1.1: {e}")
+            return []

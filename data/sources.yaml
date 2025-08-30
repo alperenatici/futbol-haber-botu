@@ -1,6 +1,25 @@
 language: tr
-rss_feeds: []
-rss_sources: []
+rss_feeds:
+  - url: "https://www.fanatik.com.tr/rss/futbol.xml"
+    name: "Fanatik Futbol"
+    category: "football"
+  - url: "https://www.sporx.com/rss"
+    name: "Sporx"
+    category: "sports"
+  - url: "https://www.aspor.com.tr/rss"
+    name: "A Spor"
+    category: "sports"
+  - url: "https://www.trtspor.com.tr/rss"
+    name: "TRT Spor"
+    category: "sports"
+
+rss_sources:
+  - url: "https://www.goal.com/tr/rss"
+    name: "Goal Türkiye"
+    category: "football"
+  - url: "https://www.milliyet.com.tr/rss/rssnew/spor.xml"
+    name: "Milliyet Spor"
+    category: "sports"
 
 # X/Twitter accounts to follow for sports news
 twitter_accounts:

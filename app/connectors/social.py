@@ -16,18 +16,38 @@ class SocialConnector:
     """Connector for social media platforms."""
     
     def __init__(self):
-        self.twitter_accounts = [
-            "yagosabuncuoglu",  # Yağız Sabuncuoğlu
-            "FabrizioRomano",   # Fabrizio Romano
-            "DiMarzio",         # Gianluca Di Marzio
-            "aspor",            # A Spor
-            "sporx",            # Sporx
-            "trtspor",          # TRT Spor
-            "NTVSpor",          # NTV Spor
-            "skysports",        # Sky Sports
-        ]
+        # Load accounts from config instead of hardcoding
+        self.twitter_accounts = self._load_twitter_accounts()
+        if not self.twitter_accounts:
+            # Fallback to basic list if config fails
+            self.twitter_accounts = [
+                "yagosabuncuoglu",  # Yağız Sabuncuoğlu
+                "aspor",            # A Spor
+                "sporx",            # Sporx
+            ]
         self._api_v1 = None
         self._init_twitter_client()
+    
+    def _load_twitter_accounts(self):
+        """Load Twitter accounts from sources.yaml config."""
+        try:
+            import yaml
+            from pathlib import Path
+            
+            config_path = Path("data/sources.yaml")
+            if not config_path.exists():
+                logger.warning("sources.yaml not found")
+                return []
+            
+            with open(config_path, 'r', encoding='utf-8') as f:
+                config = yaml.safe_load(f)
+                accounts = config.get('twitter_accounts', [])
+                usernames = [acc.get('username') for acc in accounts if acc.get('username')]
+                logger.info(f"Loaded {len(usernames)} Twitter accounts from config")
+                return usernames
+        except Exception as e:
+            logger.error(f"Error loading Twitter accounts from config: {e}")
+            return []
     
     def _init_twitter_client(self):
         """Initialize Twitter API client."""
