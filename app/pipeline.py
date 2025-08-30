@@ -62,24 +62,40 @@ class NewsPipeline:
         # RSS ve web sitesi toplama devre dışı bırakıldı
         logger.info("Sadece Twitter hesaplarından haber toplanacak...")
         
-        # Fetch tweets from monitored accounts
-        logger.info("Fetching tweets from monitored X/Twitter accounts...")
+        # Fetch tweets using search (Free tier compatible)
+        logger.info("Searching for sports tweets using X/Twitter API v2...")
         try:
-            # Get tweets from last 6 hours (less frequent checks)
-            tweets = self.twitter_connector.get_all_monitored_tweets(since_hours=6)
+            # Use search for sports-related tweets (Free tier compatible)
+            sports_tweets = self.twitter_connector.search_sports_tweets(
+                query="futbol OR transfer OR gol OR maç OR Galatasaray OR Fenerbahçe OR Beşiktaş OR Trabzonspor",
+                count=50
+            )
+            
+            # Also try to get tweets from specific monitored accounts using search
+            monitored_tweets = []
+            for account in self.twitter_connector.accounts[:3]:  # Limit to avoid rate limits
+                username = account.get('username')
+                if username:
+                    user_tweets = self.twitter_connector.get_user_tweets(username, count=5, since_hours=6)
+                    monitored_tweets.extend(user_tweets)
+                    import time
+                    time.sleep(1)  # Rate limit protection
+            
+            # Combine all tweets
+            all_tweets = sports_tweets + monitored_tweets
             
             # Filter for quality and sports relevance
-            filtered_tweets = self.twitter_connector.filter_quality_tweets(tweets)
-            logger.info(f"Found {len(filtered_tweets)} quality tweets from {len(tweets)} total")
+            filtered_tweets = self.twitter_connector.filter_quality_tweets(all_tweets)
+            logger.info(f"Found {len(filtered_tweets)} quality tweets from {len(all_tweets)} total")
             
             # Process tweets into NewsItems
             tweet_news_items = self.tweet_processor.process_tweets_batch(filtered_tweets)
             all_items.extend(tweet_news_items)
             
-            logger.info(f"Successfully processed {len(tweet_news_items)} news items from X/Twitter")
+            logger.info(f"Successfully processed {len(tweet_news_items)} news items from X/Twitter search")
             
         except Exception as e:
-            logger.error(f"Error fetching tweets: {e}")
+            logger.error(f"Error searching tweets: {e}")
             logger.warning("Continuing without Twitter data")
         
         # Skip social media due to X API limitations
