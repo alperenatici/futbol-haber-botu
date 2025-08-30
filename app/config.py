@@ -12,8 +12,8 @@ load_dotenv()
 
 
 class RateLimits(BaseModel):
-    min_minutes_between_posts: int = 10
-    daily_post_cap: int = 30
+    min_minutes_between_posts: int = 60  # 1 saat aralarla post
+    daily_post_cap: int = 12  # Günde maksimum 12 tweet
 
 
 class RSSFeed(BaseModel):

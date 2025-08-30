@@ -49,11 +49,11 @@ class XClient:
                 consumer_secret=self.api_secret,
                 access_token=self.access_token,
                 access_token_secret=self.access_token_secret,
-                wait_on_rate_limit=True
+                wait_on_rate_limit=False  # Manuel rate limit handling
             )
             
             # Keep v1.1 API for media upload only
-            self._api_v1 = tweepy.API(auth, wait_on_rate_limit=True)
+            self._api_v1 = tweepy.API(auth, wait_on_rate_limit=False)
             
             logger.info("X/Twitter clients initialized successfully")
             
@@ -153,6 +153,11 @@ class XClient:
         except tweepy.BadRequest as e:
             logger.error(f"Bad request: {e}")
             logger.error(f"Tweet text might be too long or contain invalid characters")
+            return None
+        except tweepy.TooManyRequests as e:
+            logger.warning(f"Rate limit exceeded: {e}")
+            # Kısa bir bekleme süresi (5 dakika) sonra tekrar dene
+            logger.info("Rate limit hit - bot will wait for next scheduled run")
             return None
         except Exception as e:
             logger.error(f"Error posting tweet: {e}")

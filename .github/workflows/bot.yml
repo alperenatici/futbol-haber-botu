@@ -2,8 +2,8 @@ name: Football News Bot
 
 on:
   schedule:
-    # Her 30 dakikada bir çalışır (7/24 aktif)
-    - cron: '*/30 * * * *'
+    # Her 2 saatte bir çalışır (rate limit sorununu önlemek için)
+    - cron: '0 */2 * * *'
   workflow_dispatch:
     inputs:
       dry_run:
@@ -13,7 +13,7 @@ on:
       max_items:
         description: 'Maximum items to process'
         required: false
-        default: '5'
+        default: '2'
   push:
     branches: [ main ]
   pull_request:
@@ -55,10 +55,10 @@ jobs:
           echo "max_items=${{ github.event.inputs.max_items }}" >> $GITHUB_OUTPUT
         elif [ "${{ github.ref }}" = "refs/heads/main" ]; then
           echo "dry_run=false" >> $GITHUB_OUTPUT
-          echo "max_items=5" >> $GITHUB_OUTPUT
+          echo "max_items=2" >> $GITHUB_OUTPUT
         else
           echo "dry_run=true" >> $GITHUB_OUTPUT
-          echo "max_items=3" >> $GITHUB_OUTPUT
+          echo "max_items=1" >> $GITHUB_OUTPUT
         fi
     
     - name: Test X/Twitter connection
