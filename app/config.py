@@ -12,8 +12,8 @@ load_dotenv()
 
 
 class RateLimits(BaseModel):
-    min_minutes_between_posts: int = 60  # 1 saat aralarla post
-    daily_post_cap: int = 12  # Günde maksimum 12 tweet
+    min_minutes_between_posts: int = 180  # 3 saat aralarla post
+    daily_post_cap: int = 6  # Günde maksimum 6 tweet
 
 
 class RSSFeed(BaseModel):
@@ -71,6 +71,7 @@ class Settings:
         self.x_api_secret = os.getenv("X_API_SECRET")
         self.x_access_token = os.getenv("X_ACCESS_TOKEN")
         self.x_access_token_secret = os.getenv("X_ACCESS_TOKEN_SECRET")
+        self.x_bearer_token = os.getenv("X_BEARER_TOKEN")
         self.openverse_client_id = os.getenv("OPENVERSE_CLIENT_ID")
         self.openverse_client_secret = os.getenv("OPENVERSE_CLIENT_SECRET")
         

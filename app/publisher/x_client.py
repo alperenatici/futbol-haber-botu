@@ -156,8 +156,8 @@ class XClient:
             return None
         except tweepy.TooManyRequests as e:
             logger.warning(f"Rate limit exceeded: {e}")
-            # Kısa bir bekleme süresi (5 dakika) sonra tekrar dene
-            logger.info("Rate limit hit - bot will wait for next scheduled run")
+            # Twitter Free tier için daha uzun bekleme
+            logger.info("Rate limit hit - bot will skip this cycle completely")
             return None
         except Exception as e:
             logger.error(f"Error posting tweet: {e}")
